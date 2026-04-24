@@ -1,0 +1,17 @@
+Source: linxpad
+Section: utils
+Priority: optional
+Maintainer: Andrianos Papamarkou <andrianos@example.com>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.6.2
+Homepage: https://github.com/apapamarkou/linxpad
+Rules-Requires-Root: no
+
+Package: linxpad
+Architecture: all
+Depends: ${misc:Depends}, python3 (>= 3.11), python3-pyqt6 (>= 6.4), python3-watchdog (>= 3.0)
+Description: macOS-style fullscreen application launcher for Linux
+ LinxPad is a fullscreen application launcher for Linux supporting both
+ X11 and Wayland. It provides a grid of application icons with folder
+ grouping, drag-and-drop reordering, multi-page navigation, integrated
+ search, and a settings panel.

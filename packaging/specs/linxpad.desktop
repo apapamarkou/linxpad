@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=LinxPad
+Comment=Full screen application launcher for Linux
+Exec=linxpad
+Icon=linxpad
+Categories=Utility;
+Terminal=false
+StartupNotify=false
+StartupWMClass=LinxPad
+Keywords=launcher;applications;search;

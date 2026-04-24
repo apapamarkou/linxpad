@@ -1,0 +1,214 @@
+#!/usr/bin/env bash
+# LinxPad installer — works from git clone or binary tarball.
+# Usage: ./install [--non-interactive]
+set -euo pipefail
+
+NON_INTERACTIVE=0
+[[ "${1:-}" == "--non-interactive" ]] && NON_INTERACTIVE=1
+
+# ── Helpers ───────────────────────────────────────────────────────────────────
+
+RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; CYAN='\033[0;36m'
+BOLD='\033[1m'; NC='\033[0m'
+
+info()  { echo -e "${CYAN}→${NC} $*"; }
+ok()    { echo -e "${GREEN}✓${NC} $*"; }
+warn()  { echo -e "${YELLOW}⚠${NC} $*"; }
+die()   { echo -e "${RED}✗${NC} $*" >&2; exit 1; }
+
+ask() {
+    # ask <prompt> — returns 0 (yes) or 1 (no); auto-yes in non-interactive mode
+    [[ $NON_INTERACTIVE -eq 1 ]] && return 0
+    local ans
+    read -r -p "$1 [Y/n] " ans
+    [[ -z "$ans" || "$ans" =~ ^[Yy] ]]
+}
+
+# ── Welcome ───────────────────────────────────────────────────────────────────
+
+printf '\033c'
+echo -e "${BOLD}${CYAN}"
+echo "  ██╗     ██╗███╗   ██╗██╗  ██╗██████╗  █████╗ ██████╗ "
+echo "  ██║     ██║████╗  ██║╚██╗██╔╝██╔══██╗██╔══██╗██╔══██╗"
+echo "  ██║     ██║██╔██╗ ██║ ╚███╔╝ ██████╔╝███████║██║  ██║"
+echo "  ██║     ██║██║╚██╗██║ ██╔██╗ ██╔═══╝ ██╔══██║██║  ██║"
+echo "  ███████╗██║██║ ╚████║██╔╝ ██╗██║     ██║  ██║██████╔╝"
+echo "  ╚══════╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝╚═════╝ "
+echo -e "${NC}"
+echo -e "  A full-screen application launcher for Linux"
+echo -e "  Thank you for installing LinxPad!\n"
+
+# ── Locate source root (git clone vs tarball) ─────────────────────────────────
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# In a tarball the wheel is in wheels/; in a git clone we build it on the fly.
+if ls "$SCRIPT_DIR/wheels"/linxpad-*.whl &>/dev/null 2>&1; then
+    MODE=tarball
+    WHEEL="$(ls "$SCRIPT_DIR/wheels"/linxpad-*.whl | head -1)"
+else
+    MODE=source
+    WHEEL=""
+fi
+
+# ── Dependency check ──────────────────────────────────────────────────────────
+
+MISSING_PYTHON=0
+MISSING_PIP=0
+MISSING_PYQT6=0
+MISSING_WATCHDOG=0
+
+python3 --version &>/dev/null || MISSING_PYTHON=1
+python3 -m pip --version &>/dev/null 2>&1 || MISSING_PIP=1
+
+if [[ $MISSING_PYTHON -eq 0 ]]; then
+    python3 -c "import PyQt6" &>/dev/null 2>&1 || MISSING_PYQT6=1
+    python3 -c "import watchdog" &>/dev/null 2>&1 || MISSING_WATCHDOG=1
+fi
+
+MISSING_DEPS=$((MISSING_PYTHON + MISSING_PIP + MISSING_PYQT6 + MISSING_WATCHDOG))
+
+if [[ $MISSING_DEPS -gt 0 ]]; then
+    MISSING_LIST=()
+    [[ $MISSING_PYTHON   -eq 1 ]] && MISSING_LIST+=("python3 >= 3.11")
+    [[ $MISSING_PIP      -eq 1 ]] && MISSING_LIST+=("python3-pip")
+    [[ $MISSING_PYQT6    -eq 1 ]] && MISSING_LIST+=("python3-pyqt6 (PyQt6 >= 6.4)")
+    [[ $MISSING_WATCHDOG -eq 1 ]] && MISSING_LIST+=("python3-watchdog (watchdog >= 3.0)")
+    warn "Missing: ${MISSING_LIST[*]}"
+    echo ""
+fi
+
+# ── Distro detection ──────────────────────────────────────────────────────────
+
+detect_distro() {
+    if [[ -f /etc/os-release ]]; then
+        # shellcheck source=/dev/null
+        source /etc/os-release
+        echo "${ID:-unknown}"
+    else
+        echo "unknown"
+    fi
+}
+
+install_deps_fedora() {
+    local pkgs=()
+    [[ $MISSING_PYTHON   -eq 1 ]] && pkgs+=(python3)
+    [[ $MISSING_PIP      -eq 1 ]] && pkgs+=(python3-pip)
+    [[ $MISSING_PYQT6    -eq 1 ]] && pkgs+=(python3-pyqt6)
+    [[ $MISSING_WATCHDOG -eq 1 ]] && pkgs+=(python3-watchdog)
+    info "Installing dependencies for Fedora..."
+    dnf install -y "${pkgs[@]}" &>/dev/null
+}
+
+install_deps_opensuse() {
+    local pkgs=()
+    [[ $MISSING_PYTHON   -eq 1 ]] && pkgs+=(python3)
+    [[ $MISSING_PIP      -eq 1 ]] && pkgs+=(python3-pip)
+    [[ $MISSING_PYQT6    -eq 1 ]] && pkgs+=(python3-qt6)
+    [[ $MISSING_WATCHDOG -eq 1 ]] && pkgs+=(python3-watchdog)
+    info "Installing dependencies for openSUSE..."
+    zypper install -y "${pkgs[@]}" &>/dev/null
+}
+
+install_deps_debian() {
+    local pkgs=()
+    [[ $MISSING_PYTHON   -eq 1 ]] && pkgs+=(python3)
+    [[ $MISSING_PIP      -eq 1 ]] && pkgs+=(python3-pip)
+    [[ $MISSING_PYQT6    -eq 1 ]] && pkgs+=(python3-pyqt6)
+    [[ $MISSING_WATCHDOG -eq 1 ]] && pkgs+=(python3-watchdog)
+    info "Installing dependencies for Debian/Ubuntu..."
+    apt-get install -y "${pkgs[@]}" &>/dev/null
+}
+
+install_deps_arch() {
+    local pkgs=()
+    [[ $MISSING_PYTHON   -eq 1 ]] && pkgs+=(python)
+    [[ $MISSING_PIP      -eq 1 ]] && pkgs+=(python-pip)
+    [[ $MISSING_PYQT6    -eq 1 ]] && pkgs+=(python-pyqt6)
+    [[ $MISSING_WATCHDOG -eq 1 ]] && pkgs+=(python-watchdog)
+    info "Installing dependencies for Arch..."
+    pacman -S --noconfirm "${pkgs[@]}" &>/dev/null
+}
+
+if [[ $MISSING_DEPS -gt 0 ]]; then
+    DISTRO="$(detect_distro)"
+    SUPPORTED=1
+
+    case "$DISTRO" in
+        fedora|rhel|centos|almalinux|rocky)
+            ask "Install missing dependencies with dnf?" || die "Aborted."
+            install_deps_fedora
+            ;;
+        opensuse*|sles)
+            ask "Install missing dependencies with zypper?" || die "Aborted."
+            install_deps_opensuse
+            ;;
+        debian|ubuntu|linuxmint|pop)
+            ask "Install missing dependencies with apt-get?" || die "Aborted."
+            install_deps_debian
+            ;;
+        arch|manjaro|endeavouros|garuda)
+            ask "Install missing dependencies with pacman?" || die "Aborted."
+            install_deps_arch
+            ;;
+        *)
+            SUPPORTED=0
+            ;;
+    esac
+
+    if [[ $SUPPORTED -eq 0 ]]; then
+        echo -e "${RED}✗ Unsupported distribution: ${DISTRO:-unknown}${NC}"
+        echo ""
+        echo "  Please install the following dependencies manually, then re-run this installer:"
+        [[ $MISSING_PYTHON   -eq 1 ]] && echo "    • python3 >= 3.11"
+        [[ $MISSING_PIP      -eq 1 ]] && echo "    • pip (python3-pip)"
+        [[ $MISSING_PYQT6    -eq 1 ]] && echo "    • PyQt6 >= 6.4"
+        [[ $MISSING_WATCHDOG -eq 1 ]] && echo "    • watchdog >= 3.0"
+        exit 1
+    fi
+fi
+
+# ── Install linxpad ───────────────────────────────────────────────────────────
+
+info "Installing LinxPad..."
+
+PIP_INSTALL_ARGS=(--user --quiet)
+# Newer distros mark system Python as externally managed; detect the marker.
+if python3 -c "
+import sysconfig, pathlib
+if (pathlib.Path(sysconfig.get_path('stdlib')) / 'EXTERNALLY-MANAGED').exists():
+    raise SystemExit(0)
+raise SystemExit(1)
+" 2>/dev/null; then
+    PIP_INSTALL_ARGS+=(--break-system-packages)
+fi
+
+if [[ "$MODE" == "tarball" ]]; then
+    pip3 install "${PIP_INSTALL_ARGS[@]}" "$WHEEL"
+else
+    pip3 install "${PIP_INSTALL_ARGS[@]}" "$SCRIPT_DIR"
+fi
+
+# ── Install assets ────────────────────────────────────────────────────────────
+
+ICONS_DIR="$HOME/.local/share/icons/hicolor/256x256/apps"
+APPS_DIR="$HOME/.local/share/applications"
+mkdir -p "$ICONS_DIR" "$APPS_DIR"
+
+if [[ "$MODE" == "tarball" ]]; then
+    cp "$SCRIPT_DIR/linxpad.png"        "$ICONS_DIR/"
+    cp "$SCRIPT_DIR/linxpad-folder.png" "$ICONS_DIR/"
+    cp "$SCRIPT_DIR/linxpad.desktop"    "$APPS_DIR/"
+else
+    cp "$SCRIPT_DIR/src/linxpad/icons/linxpad.png"        "$ICONS_DIR/"
+    cp "$SCRIPT_DIR/src/linxpad/icons/linxpad-folder.png" "$ICONS_DIR/"
+    cp "$SCRIPT_DIR/packaging/specs/linxpad.desktop"      "$APPS_DIR/"
+fi
+
+update-desktop-database "$APPS_DIR" 2>/dev/null || true
+gtk-update-icon-cache -f -t "$HOME/.local/share/icons/hicolor" 2>/dev/null || true
+
+ok "LinxPad installed successfully!"
+echo ""
+echo -e "  Run ${BOLD}linxpad${NC} to launch, or find it in your application menu."
+echo ""

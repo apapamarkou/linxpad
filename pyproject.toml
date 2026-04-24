@@ -1,0 +1,52 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "linxpad"
+version = "1.0.0"
+description = "A macOS-style fullscreen application launcher for Linux (X11 + Wayland)"
+readme = "README.md"
+license = { text = "GPL-3.0-or-later" }
+requires-python = ">=3.11"
+authors = [{ name = "Andrianos Papamarkou", email = "andrianos@example.com" }]
+keywords = ["launcher", "linux", "pyqt6", "desktop"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: X11 Applications :: Qt",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = ["PyQt6>=6.4", "watchdog>=3.0"]
+
+[project.scripts]
+linxpad = "linxpad.main:main"
+
+[project.urls]
+Homepage = "https://github.com/apapamarkou/linxpad"
+Issues = "https://github.com/apapamarkou/linxpad/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/linxpad"]
+include = ["src/linxpad/icons/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v"
+pythonpath = ["src"]
+
+[tool.ruff]
+src = ["src"]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP"]
+ignore = ["E501"]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]

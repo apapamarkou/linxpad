@@ -1,0 +1,30 @@
+#!/usr/bin/make -f
+
+export DH_VERBOSE = 1
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	# Wheel is pre-built and mounted at /wheels by the build script
+
+override_dh_auto_test:
+	# Tests run separately in CI pre-flight — skip during packaging
+
+override_dh_auto_install:
+	pip3 install --no-deps --break-system-packages \
+		--root=debian/linxpad --prefix=/usr \
+		/wheels/linxpad-*.whl
+	# Move any misplaced local/ files to the correct usr/ location
+	if [ -d debian/linxpad/usr/local ]; then \
+		cp -a debian/linxpad/usr/local/. debian/linxpad/usr/ && \
+		rm -rf debian/linxpad/usr/local; \
+	fi
+	install -Dm644 packaging/specs/linxpad.desktop \
+		debian/linxpad/usr/share/applications/linxpad.desktop
+	install -Dm644 src/linxpad/icons/linxpad.png \
+		debian/linxpad/usr/share/icons/hicolor/256x256/apps/linxpad.png
+	install -Dm644 src/linxpad/icons/linxpad-folder.png \
+		debian/linxpad/usr/share/icons/hicolor/256x256/apps/linxpad-folder.png
+
+override_dh_usrlocal:
