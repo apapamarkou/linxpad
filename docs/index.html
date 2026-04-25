@@ -1,0 +1,751 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LinxPad — macOS-style App Launcher for Linux</title>
+  <meta name="description"
+    content="LinxPad is a macOS-style fullscreen application launcher for Linux, supporting both X11 and Wayland.">
+  <link rel="icon" href="images/logo.png">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #f5f5f7;
+      --surface: #ffffff;
+      --text: #1d1d1f;
+      --muted: #6e6e73;
+      --accent: #0071e3;
+      --accent-hover: #0077ed;
+      --border: #d2d2d7;
+      --radius: 18px;
+      --nav-h: 52px;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: var(--nav-h);
+      background: rgba(255, 255, 255, .82);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .nav-logo img {
+      width: 26px;
+      height: 26px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: .875rem;
+      color: var(--text);
+      text-decoration: none;
+      opacity: .85;
+      transition: opacity .15s;
+    }
+
+    .nav-links a:hover {
+      opacity: 1;
+    }
+
+    .nav-cta {
+      background: var(--accent);
+      color: #fff !important;
+      opacity: 1 !important;
+      padding: 6px 16px;
+      border-radius: 980px;
+      font-weight: 500;
+      transition: background .15s !important;
+    }
+
+    .nav-cta:hover {
+      background: var(--accent-hover) !important;
+    }
+
+    /* ── HERO ── */
+    #hero {
+      position: relative;
+      min-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+      padding: 80px 24px 60px;
+      background: url("images/00_linxpad-cover.jpg") center / cover no-repeat;
+    }
+
+    #hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, .5);
+      z-index: 0;
+    }
+
+    .hero-bg {
+      display: none;
+    }
+
+    #hero>* {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-eyebrow {
+      font-size: .8rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .7);
+      margin-bottom: 14px;
+    }
+
+    #hero h1 {
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -.02em;
+      line-height: 1.08;
+      margin-bottom: 20px;
+    }
+
+    #hero p {
+      font-size: clamp(1rem, 2.2vw, 1.3rem);
+      color: rgba(255, 255, 255, .8);
+      max-width: 560px;
+      margin: 0 auto 36px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 13px 28px;
+      border-radius: 980px;
+      font-size: .95rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: transform .15s, box-shadow .15s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, .18);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, .15);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, .35);
+      backdrop-filter: blur(8px);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, .25);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--accent);
+      border: 1.5px solid var(--accent);
+    }
+
+    .btn-outline:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      padding: 96px 24px;
+    }
+
+    .section-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: clamp(1.9rem, 4vw, 2.8rem);
+      font-weight: 700;
+      letter-spacing: -.02em;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+
+    .section-sub {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 560px;
+    }
+
+    /* ── FEATURES ── */
+    #features {
+      background: var(--surface);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 28px;
+      margin-top: 56px;
+    }
+
+    .feature-card {
+      background: var(--bg);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, .1);
+    }
+
+    .feature-card img {
+      width: 100%;
+      aspect-ratio: 16/10;
+      object-fit: cover;
+      display: block;
+    }
+
+    .feature-card-body {
+      padding: 22px 24px 26px;
+    }
+
+    .feature-card-body h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .feature-card-body p {
+      font-size: .9rem;
+      color: var(--muted);
+    }
+
+    /* ── HIGHLIGHTS (icon list) ── */
+    #highlights {
+      background: var(--bg);
+    }
+
+    .highlights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
+      margin-top: 56px;
+    }
+
+    .highlight-item {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .hi-icon {
+      font-size: 1.8rem;
+      line-height: 1;
+    }
+
+    .highlight-item h4 {
+      font-size: .95rem;
+      font-weight: 600;
+    }
+
+    .highlight-item p {
+      font-size: .85rem;
+      color: var(--muted);
+    }
+
+    /* ── DOWNLOADS ── */
+    #downloads {
+      background: var(--surface);
+    }
+
+    .dl-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-top: 48px;
+    }
+
+    .dl-card {
+      background: var(--bg);
+      border-radius: var(--radius);
+      padding: 28px 22px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    .dl-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, .09);
+    }
+
+    .dl-icon {
+      font-size: 2.2rem;
+    }
+
+    .dl-card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .dl-card p {
+      font-size: .82rem;
+      color: var(--muted);
+    }
+
+    .dl-card .btn {
+      margin-top: 4px;
+      font-size: .85rem;
+      padding: 9px 20px;
+    }
+
+    /* ── SUPPORT ── */
+    #support {
+      background: var(--bg);
+    }
+
+    .support-box {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 56px 40px;
+      text-align: center;
+      max-width: 640px;
+      margin: 48px auto 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .support-box .big-icon {
+      font-size: 3rem;
+    }
+
+    .support-box h3 {
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+
+    .support-box p {
+      font-size: .95rem;
+      color: var(--muted);
+      max-width: 420px;
+    }
+
+    /* ── ABOUT ── */
+    #about {
+      background: var(--surface);
+    }
+
+    .about-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+      margin-top: 48px;
+    }
+
+    .about-inner img {
+      width: 100%;
+      border-radius: var(--radius);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .12);
+    }
+
+    .about-text {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .about-text p {
+      font-size: .95rem;
+      color: var(--muted);
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .badge {
+      font-size: .75rem;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 980px;
+      background: var(--bg);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #1d1d1f;
+      color: rgba(255, 255, 255, .6);
+      text-align: center;
+      padding: 40px 24px;
+      font-size: .82rem;
+    }
+
+    footer a {
+      color: rgba(255, 255, 255, .6);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: #fff;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 720px) {
+      .nav-links {
+        display: none;
+      }
+
+      .about-inner {
+        grid-template-columns: 1fr;
+      }
+
+      .about-inner img {
+        order: -1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-logo" href="#hero">
+      <img src="images/logo.png" alt="LinxPad logo">
+      LinxPad
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#downloads">Downloads</a></li>
+      <li><a href="#support">Support</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="https://github.com/apapamarkou/linxpad" target="_blank" rel="noopener" class="nav-cta">GitHub ↗</a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <p class="hero-eyebrow">Open Source · X11 &amp; Wayland</p>
+    <h1>Your apps,<br>beautifully launched.</h1>
+    <p>LinxPad brings a macOS-style fullscreen app launcher to Linux — fast, elegant, and distraction-free.</p>
+    <div class="btn-group">
+      <a href="#downloads" class="btn btn-primary">
+        ⬇ Download
+      </a>
+      <a href="https://github.com/apapamarkou/linxpad" target="_blank" rel="noopener" class="btn btn-ghost">
+        View on GitHub
+      </a>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="section-inner">
+      <p class="section-label">Features</p>
+      <h2 class="section-title">Everything you need,<br>nothing you don't.</h2>
+      <p class="section-sub">A focused launcher built for productivity and aesthetics on any Linux desktop.</p>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <img src="images/01_Screenshot-MainView-OrganizeInPagesAndFolders.jpg" alt="Pages and folders">
+          <div class="feature-card-body">
+            <h3>Pages &amp; Folders</h3>
+            <p>Organise your apps into folders and swipe through pages — just like you're used to.</p>
+          </div>
+        </div>
+        <div class="feature-card">
+          <img src="images/02_Screenshot-AnAppFolder.jpg" alt="App folder">
+          <div class="feature-card-body">
+            <h3>App Folders</h3>
+            <p>Group related apps into folders with drag-and-drop reordering for a tidy grid.</p>
+          </div>
+        </div>
+        <div class="feature-card">
+          <img src="images/03_Screenshot-Search-Apps-and-Folders.jpg" alt="Search apps">
+          <div class="feature-card-body">
+            <h3>Instant Search</h3>
+            <p>Start typing anywhere to search apps and folders — results appear instantly.</p>
+          </div>
+        </div>
+        <div class="feature-card">
+          <img src="images/04_Screenshot-Search-Web.jpg" alt="Web search">
+          <div class="feature-card-body">
+            <h3>Web Search</h3>
+            <p>Search the web directly from the launcher without switching to a browser first.</p>
+          </div>
+        </div>
+        <div class="feature-card">
+          <img src="images/05_Screenshot-Settings.jpg" alt="Settings">
+          <div class="feature-card-body">
+            <h3>Customisable Settings</h3>
+            <p>Tune grid size, font, transparency, and launch mode to match your workflow.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HIGHLIGHTS -->
+  <section id="highlights">
+    <div class="section-inner">
+      <p class="section-label">Why LinxPad</p>
+      <h2 class="section-title">Built for the Linux desktop.</h2>
+
+      <div class="highlights-grid">
+        <div class="highlight-item">
+          <span class="hi-icon">🖥️</span>
+          <h4>X11 &amp; Wayland</h4>
+          <p>Works seamlessly on both display server protocols.</p>
+        </div>
+        <div class="highlight-item">
+          <span class="hi-icon">⚡</span>
+          <h4>Live Reload</h4>
+          <p>Detects new or removed apps automatically</p>
+        </div>
+        <div class="highlight-item">
+          <span class="hi-icon">🔓</span>
+          <h4>Use Everywhere</h4>
+          <p>Works in any desktop environment or window manager.</p>
+        </div>
+        <div class="highlight-item">
+          <span class="hi-icon">🐍</span>
+          <h4>Python + PyQt6</h4>
+          <p>Lightweight, hackable, and easy to extend.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOWNLOADS -->
+  <section id="downloads">
+    <div class="section-inner">
+      <p class="section-label">Downloads</p>
+      <h2 class="section-title">Get LinxPad for your distro.</h2>
+      <p class="section-sub">Pre-built packages for the most popular distributions, plus a universal AppImage and
+        Flatpak.</p>
+
+      <div class="dl-grid">
+        <div class="dl-card">
+          <span class="dl-icon">📦</span>
+          <h3>Tarball</h3>
+          <p>Universal installer for any distro</p>
+          <a href="https://github.com/apapamarkou/linxpad/releases" target="_blank" rel="noopener"
+            class="btn btn-primary">Download</a>
+        </div>
+        <div class="dl-card">
+          <span class="dl-icon">🔵</span>
+          <h3>DEB</h3>
+          <p>Debian 12/13 · Ubuntu 22.04–25.04</p>
+          <a href="https://github.com/apapamarkou/linxpad/releases" target="_blank" rel="noopener"
+            class="btn btn-primary">Download</a>
+        </div>
+        <div class="dl-card">
+          <span class="dl-icon">🎩</span>
+          <h3>RPM</h3>
+          <p>Fedora 42/43 · openSUSE Tumbleweed</p>
+          <a href="https://github.com/apapamarkou/linxpad/releases" target="_blank" rel="noopener"
+            class="btn btn-primary">Download</a>
+        </div>
+        <div class="dl-card">
+          <span class="dl-icon">🏹</span>
+          <h3>Arch</h3>
+          <p>PKGBUILD or manual install</p>
+          <a href="https://github.com/apapamarkou/linxpad/releases" target="_blank" rel="noopener"
+            class="btn btn-primary">Download</a>
+        </div>
+        <div class="dl-card">
+          <span class="dl-icon">🖼️</span>
+          <h3>AppImage</h3>
+          <p>Any Linux x86_64 — no install needed</p>
+          <a href="https://github.com/apapamarkou/linxpad/releases" target="_blank" rel="noopener"
+            class="btn btn-primary">Download</a>
+        </div>
+        <div class="dl-card">
+          <span class="dl-icon">📱</span>
+          <h3>Flatpak</h3>
+          <p>Any Linux with Flatpak installed</p>
+          <a href="https://github.com/apapamarkou/linxpad/releases" target="_blank" rel="noopener"
+            class="btn btn-primary">Download</a>
+        </div>
+      </div>
+
+      <p style="margin-top:32px; font-size:.85rem; color:var(--muted); text-align:center;">
+        All packages are available on the
+        <a href="https://github.com/apapamarkou/linxpad/releases" target="_blank" rel="noopener"
+          style="color:var(--accent);">GitHub Releases</a> page.
+      </p>
+    </div>
+  </section>
+
+  <!-- SUPPORT -->
+  <section id="support">
+    <div class="section-inner">
+      <p class="section-label">Support the Project</p>
+      <h2 class="section-title">Help keep LinxPad alive.</h2>
+
+      <div class="support-box">
+        <span class="big-icon">☕</span>
+        <h3>Buy me a coffee</h3>
+        <p>LinxPad is free and open source. If it makes your Linux desktop a little nicer, consider supporting its
+          development.</p>
+        <a href="https://ko-fi.com" target="_blank" rel="noopener" class="btn btn-primary">Support on Ko-fi</a>
+        <p style="font-size:.82rem;">You can also star the repo, share it, or contribute code — every bit helps!</p>
+        <div class="btn-group">
+          <a href="https://github.com/apapamarkou/linxpad" target="_blank" rel="noopener" class="btn btn-outline">⭐ Star
+            on GitHub</a>
+          <a href="https://github.com/apapamarkou/linxpad/issues" target="_blank" rel="noopener"
+            class="btn btn-outline">🐛 Report an Issue</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-inner">
+      <p class="section-label">About</p>
+      <h2 class="section-title">The story behind LinxPad.</h2>
+
+      <div class="about-inner">
+        <img src="images/01_Screenshot-MainView-OrganizeInPagesAndFolders.jpg" alt="LinxPad main view">
+        <div class="about-text">
+          <p>LinxPad was born from a simple desire: to have the clean, fullscreen app launcher experience of macOS on a
+            Linux desktop — without compromise.</p>
+          <p>It reads standard <code>.desktop</code> files, respects your existing app ecosystem, and stays out of your
+            way until you need it. Press a key, find your app, launch it.</p>
+          <p>Built with Python and PyQt6, it's lightweight, hackable, and welcomes contributions from the community.</p>
+          <div class="badge-row">
+            <span class="badge">GPL-3.0-or-later</span>
+            <span class="badge">Python 3.11+</span>
+            <span class="badge">PyQt6 6.4+</span>
+            <span class="badge">X11</span>
+            <span class="badge">Wayland</span>
+          </div>
+          <div class="btn-group" style="margin-top:8px;">
+            <a href="https://github.com/apapamarkou/linxpad" target="_blank" rel="noopener" class="btn btn-outline">View
+              Source</a>
+            <a href="https://github.com/apapamarkou/linxpad/blob/main/docs/developer-usage.md" target="_blank"
+              rel="noopener" class="btn btn-outline">Developer Docs</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-links">
+      <a href="#features">Features</a>
+      <a href="#downloads">Downloads</a>
+      <a href="#support">Support</a>
+      <a href="#about">About</a>
+      <a href="https://github.com/apapamarkou/linxpad" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/apapamarkou/linxpad/issues" target="_blank" rel="noopener">Issues</a>
+      <a href="https://github.com/apapamarkou/linxpad/blob/main/LICENSE" target="_blank" rel="noopener">License</a>
+    </div>
+    <p>© 2026 LinxPad · Released under the <a href="https://github.com/apapamarkou/linxpad/blob/main/LICENSE"
+        target="_blank" rel="noopener">GNU GPL v3.0 or later</a></p>
+  </footer>
+
+</body>
+
+</html>
