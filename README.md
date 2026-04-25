@@ -92,26 +92,6 @@ Settings are stored in `~/.config/linxpad/`:
 | `settings.conf` | Grid layout, font size, transparency, launch mode |
 | `apps.json` | Application order, folder assignments |
 
-Example `settings.conf`:
-
-```ini
-# Grid layout
-rows=3
-cols=8
-
-# Icon label font size (points, 8–32)
-font-size=14
-
-# Background transparency (0 = fully transparent, 100 = opaque)
-transparency=75
-
-# Launch mode: full-screen or window
-launch-as=full-screen
-
-# Restore previous search/folder state on reopen: yes or no
-keep-previous-state=yes
-```
-
 ## Contributing
 
 Contributions are welcome. Please open an issue before submitting a pull request for significant changes.
