@@ -6,7 +6,7 @@ A macOS-style fullscreen application launcher for Linux, supporting both X11 and
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
 ![PyQt6](https://img.shields.io/badge/PyQt6-6.4%2B-green)
 ![Platform](https://img.shields.io/badge/platform-Linux-lightgrey)
-
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/andrianos)
 ---
 
 ## Features
