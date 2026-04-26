@@ -11,14 +11,15 @@ A macOS-style fullscreen application launcher for Linux, supporting both X11 and
 
 ## Features
 
-- Full-screen grid of application icons, auto-populated from `.desktop` files
-- Folder grouping with drag-and-drop reordering
+- Full-screen grid of application icons
+- Drag-and-drop folder grouping
+- Drag-and-drop reordering
 - Multi-page navigation with page indicator dots
 - Integrated search — apps, files, and web
-- Settings panel for grid layout, font size, transparency, and launch mode
-- Live reload — detects new/removed applications automatically via filesystem watcher
-- Single-instance enforcement with IPC messaging
+- Settings panel
+- Live reload — detects new/removed applications automatically
 - Works on X11 and Wayland
+- Works on any desktop environment or window manager (even the tilling ones)
 
 ## Requirements
 
@@ -40,15 +41,15 @@ cd linxpad-1.0.0-linux
 
 The installer detects your distribution, installs any missing dependencies, and sets up the application and desktop entry automatically. Pass `--non-interactive` to skip all prompts.
 
-### Distribution packages
+### Packages
 
 | Format | Distros |
 |--------|---------|
 | RPM | Fedora 42, 43 · openSUSE Tumbleweed |
 | DEB | Debian 12, 13 · Ubuntu 22.04, 24.04, 25.04 |
-| Arch | `PKGBUILD` via AUR or manual |
-| AppImage | Any Linux (x86\_64) |
-| Flatpak | Any Linux with Flatpak installed |
+| Arch | `PKGBUILD` manual |
+| AppImage | Any Linux Distro (x86\_64) |
+| Flatpak | Any Linux Distro with Flatpak installed |
 
 Download the appropriate package from the [Releases](https://github.com/apapamarkou/linxpad/releases) page and install with your package manager.
 
@@ -79,7 +80,7 @@ linxpad
 | Key | Action |
 |-----|--------|
 | `Esc` | Close launcher |
-| `←` / `→` | Navigate icons |
+| Arrows | Navigate in pages, folders and search results |
 | `PgUp` / `PgDn` | Navigate pages |
 | Type anything | Open search |
 
@@ -89,7 +90,7 @@ Settings are stored in `~/.config/linxpad/`:
 
 | File | Purpose |
 |------|---------|
-| `settings.conf` | Grid layout, font size, transparency, launch mode |
+| `settings.conf` | Settings panel data |
 | `apps.json` | Application order, folder assignments |
 
 ## Contributing
