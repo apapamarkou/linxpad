@@ -20,6 +20,7 @@ A macOS-style fullscreen application launcher for Linux, supporting both X11 and
 - Live reload — detects new/removed applications automatically
 - Works on X11 and Wayland
 - Works on any desktop environment or window manager (even the tilling ones)
+- Keyboard navigation and launch
 
 ## Requirements
 
