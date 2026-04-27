@@ -28,6 +28,8 @@ A macOS-style fullscreen application launcher for Linux, supporting both X11 and
 - PyQt6 >= 6.4
 - watchdog >= 3.0
 
+The requirements are automatically handled by the installers.
+
 ## Installation
 
 ### Binary tarball (recommended for most users)
