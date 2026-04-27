@@ -7,6 +7,14 @@ A macOS-style fullscreen application launcher for Linux, supporting both X11 and
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/andrianos)
 ---
 
+| Video | Screenshots |
+|--------|---------|
+|[![Watch the video](https://img.youtube.com/vi/MsBaMijBrIU/0.jpg)](https://www.youtube.com/watch?v=MsBaMijBrIU)|<img width="1920" height="1080" alt="Screenshot-Settings" src="https://github.com/user-attachments/assets/5d558029-1bc3-4560-85ca-f0a88052df84" />|
+|<img width="1920" height="1080" alt="Screenshot-OrganizeInPagesAndFolders" src="https://github.com/user-attachments/assets/6c2af5e9-5008-415b-866a-dc627df9c6fb" />|<img width="1920" height="1080" alt="Screenshot-AppFolder" src="https://github.com/user-attachments/assets/71cf7864-c0d1-4242-8b36-6a64ef3d7e48" />|
+|<img width="1920" height="1080" alt="Screenshot-Search-Apps-and-Folders" src="https://github.com/user-attachments/assets/51892dbd-2b9e-4140-84df-240b1ba43160" />|<img width="1920" height="1080" alt="Screenshot-Search-Web" src="https://github.com/user-attachments/assets/88f7f5e9-a08c-4195-9aad-0f7ffd599a4f" />|
+
+
+
 ## Features
 
 - Full-screen grid of application icons
