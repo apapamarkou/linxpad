@@ -51,6 +51,9 @@ class InlineTitle(QStackedWidget):
     def eventFilter(self, obj, event) -> bool:
         if obj is self._edit:
             if event.type() == QEvent.Type.KeyPress:
+                if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
+                    self._commit()
+                    return True
                 if event.key() == Qt.Key.Key_Escape:
                     self._cancel()
                     return True

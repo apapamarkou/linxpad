@@ -177,8 +177,6 @@ class IconItem(QGraphicsWidget):
 
         # Label
         name = self._item.get("name", "")
-        if len(name) > 20:
-            name = name[:20] + "…"
         font = QFont()
         font.setPointSize(self._font_size)
         if self._state == self.FOLDER:
@@ -186,6 +184,8 @@ class IconItem(QGraphicsWidget):
         painter.setFont(font)
         label_y = int(self._cell * 0.72)
         label_rect = QRectF(4, label_y, self._cell - 8, self._cell - label_y - 4)
+        fm = painter.fontMetrics()
+        name = fm.elidedText(name, Qt.TextElideMode.ElideRight, int(label_rect.width()))
         painter.setPen(_LABEL_COLOR)
         painter.drawText(
             label_rect, Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop, name
