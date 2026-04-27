@@ -8,7 +8,7 @@ Example:
     # font size for app icon labels (points)
     font-size=14
     # Transparency: 0 = completely transparent, 100 = no transparency
-    transparency=75
+    transparency=95
     # Launch mode: window or full-screen
     launch-as=full-screen
     # Keep search/folder state when re-opening: yes or no
@@ -27,7 +27,7 @@ _DEFAULTS = {
     "rows": "3",
     "spacing": "10",
     "font-size": "14",
-    "transparency": "75",
+    "transparency": "95",
     "launch-as": "full-screen",
     "keep-previous-state": "yes",
 }
@@ -167,7 +167,7 @@ class UISettings:
                     "font-size=14\n"
                     "\n"
                     "# Transparency: 0 = completely transparent, 100 = no transparency\n"
-                    "transparency=75\n"
+                    "transparency=95\n"
                     "\n"
                     "# Launch mode: window or full-screen\n"
                     "launch-as=full-screen\n"

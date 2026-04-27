@@ -149,7 +149,7 @@ class SettingsView(QWidget):
 
         # Transparency
         transp = max(50, min(90, int(settings.opacity * 100)))
-        self._transp_slider, transp_row = self._make_slider("Transparency %", 50, 90, transp)
+        self._transp_slider, transp_row = self._make_slider("Transparency %", 50, 100, transp)
         layout.addLayout(transp_row)
 
         # Keep previous state
