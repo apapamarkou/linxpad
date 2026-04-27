@@ -9,6 +9,8 @@ finish-args:
   - --socket=x11
   - --socket=wayland
   - --filesystem=home
+  - --filesystem=/usr/share/applications:ro
+  - --filesystem=/usr/share/icons:ro
   - --talk-name=org.freedesktop.portal.Desktop
 
 modules:
