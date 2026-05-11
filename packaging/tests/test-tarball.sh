@@ -49,8 +49,8 @@ echo "All checks passed"
 INNEREOF
 
 docker run --rm \
-    -v "$TARBALL:/tmp/linxpad.tar.gz:ro" \
-    -v "$INNER:/build-inner.sh:ro" \
+    -v "$TARBALL:/tmp/linxpad.tar.gz:ro,z" \
+    -v "$INNER:/build-inner.sh:ro,z" \
     "$IMAGE" \
     bash /build-inner.sh
 

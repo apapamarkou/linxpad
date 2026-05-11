@@ -1,3 +1,15 @@
+#  _     _                            _ 
+# | |   (_)_ __ __  ___ __   __ _  __| |
+# | |   | | '_ \\ \/ / '_ \ / _` |/ _` |
+# | |___| | | | |>  <| |_) | (_| | (_| |
+# |_____|_|_| |_/_/\_\ .__/ \__,_|\__,_|
+#                    |_|                
+#
+# Author: Andrianos Papamarkou
+# Licence: GPL3
+# https://github.com/apapamarkou/linxpad
+# https://apapamarkou.github.io/linxpad/
+ 
 from ..theme import ROW_NAME, ROW_SUB
 from .base_row import BaseRow
 from .icon_utils import load_app_icon
