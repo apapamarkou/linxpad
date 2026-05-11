@@ -220,7 +220,11 @@ class LauncherWindow(QMainWindow):
     def _build_search_bar(self) -> QWidget:
         self._search = QLineEdit()
         self._search.setPlaceholderText("Type to search applications…")
-        self._search.textChanged.connect(self._on_search)
+        self._search_timer = QTimer(self)
+        self._search_timer.setSingleShot(True)
+        self._search_timer.setInterval(200)
+        self._search_timer.timeout.connect(lambda: self._on_search(self._search.text()))
+        self._search.textChanged.connect(lambda _: self._search_timer.start())
         self._search.setMaximumWidth(600)
         wrapper = QWidget()
         QVBoxLayout(wrapper).addWidget(self._search, alignment=Qt.AlignmentFlag.AlignCenter)
