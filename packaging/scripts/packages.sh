@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
-# Interactive package builder — two-layer menu.
-# Layer 1: select package type (or all)
-# Layer 2: for multi-version distros, select version (or all)
+# Package builder.
+# Default: build all packages non-interactively.
+# Usage: packages.sh [--interactive]
 set -euo pipefail
+
+INTERACTIVE=0
+[[ "${1:-}" == "--interactive" ]] && INTERACTIVE=1
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SCRIPTS="$REPO_ROOT/packaging/scripts"
@@ -37,8 +40,10 @@ pick_versions() {
     local versions
     read -ra versions <<< "$(conf_versions "$conf_key")"
 
-    if [[ ${#versions[@]} -eq 1 ]]; then
-        run "$distro ${versions[0]}" "$script" "${versions[0]}"
+    if [[ $INTERACTIVE -eq 0 || ${#versions[@]} -eq 1 ]]; then
+        for ver in "${versions[@]}"; do
+            run "$distro $ver" "$script" "$ver"
+        done
         return
     fi
 
@@ -71,22 +76,25 @@ pick_versions() {
 # ── Layer 1: package type menu ────────────────────────────────────────────
 header "LinxPad Package Builder — v$VERSION"
 
-echo ""
-echo "  1) Source tarball"
-echo "  2) Binary tarball"
-echo "  3) openSUSE RPM"
-echo "  4) Fedora RPM"
-echo "  5) Debian .deb"
-echo "  6) Ubuntu .deb"
-echo "  7) Arch PKGBUILD"
-echo "  8) AppImage"
-echo "  9) Flatpak"
-echo "  a) All of the above"
-echo ""
-ask "Select package type(s) (e.g. 1 4 5 or a):"
-read -r choices
-
-[[ "$choices" == "a" ]] && choices="1 2 3 4 5 6 7 8 9"
+if [[ $INTERACTIVE -eq 1 ]]; then
+    echo ""
+    echo "  1) Source tarball"
+    echo "  2) Binary tarball"
+    echo "  3) openSUSE RPM"
+    echo "  4) Fedora RPM"
+    echo "  5) Debian .deb"
+    echo "  6) Ubuntu .deb"
+    echo "  7) Arch PKGBUILD"
+    echo "  8) AppImage"
+    echo "  9) Flatpak"
+    echo "  a) All of the above"
+    echo ""
+    ask "Select package type(s) (e.g. 1 4 5 or a):"
+    read -r choices
+    [[ "$choices" == "a" ]] && choices="1 2 3 4 5 6 7 8 9"
+else
+    choices="1 2 3 4 5 6 7 8 9"
+fi
 
 mkdir -p "$OUTPUT"
 

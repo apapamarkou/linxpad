@@ -1,0 +1,42 @@
+# Keep the build context small — only what the Dockerfile actually COPYs
+# is needed (currently just requirements-dev.txt).
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# Packaging output (can be large — RPMs, AppImages, Flatpaks)
+packaging/output/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Test / lint caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Flatpak builder cache
+.flatpak-builder/
+
+# Docs images (not needed in the container)
+docs/images/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git history is needed by packaging scripts (git archive), so .git is NOT excluded.

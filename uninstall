@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# LinxPad uninstaller.
+# Usage: ./uninstall [--wipe]
+set -euo pipefail
+
+WIPE=0
+[[ "${1:-}" == "--wipe" ]] && WIPE=1
+
+RED='\033[0;31m'; GREEN='\033[0;32m'; CYAN='\033[0;36m'; NC='\033[0m'
+
+ok()  { echo -e "${GREEN}✓${NC} $*"; }
+info(){ echo -e "${CYAN}→${NC} $*"; }
+die() { echo -e "${RED}✗${NC} $*" >&2; exit 1; }
+
+ICONS_DIR="$HOME/.local/share/icons/hicolor/256x256/apps"
+APPS_DIR="$HOME/.local/share/applications"
+
+info "Uninstalling LinxPad..."
+pip3 uninstall -y linxpad 2>/dev/null || python3 -m pip uninstall -y linxpad 2>/dev/null || true
+rm -f "$ICONS_DIR/linxpad.png" "$ICONS_DIR/linxpad-folder.png"
+rm -f "$APPS_DIR/linxpad.desktop"
+update-desktop-database "$APPS_DIR" 2>/dev/null || true
+gtk-update-icon-cache -f -t "$HOME/.local/share/icons/hicolor" 2>/dev/null || true
+ok "LinxPad uninstalled."
+
+if [[ $WIPE -eq 1 ]]; then
+    info "Wiping configuration..."
+    rm -rf "$HOME/.config/linxpad"
+    ok "Configuration removed."
+fi

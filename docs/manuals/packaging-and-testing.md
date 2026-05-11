@@ -25,10 +25,20 @@ Each comma-separated value produces a separate package. Add or remove versions h
 
 ## Building packages
 
-### Interactive builder
+### Build all packages (non-interactive)
 
 ```bash
 make packages
+# or
+bash packaging/scripts/packages.sh
+```
+
+### Interactive builder (select what to build)
+
+```bash
+make package
+# or
+bash packaging/scripts/packages.sh --interactive
 ```
 
 Presents a two-layer menu: first select the package type, then (for multi-version distros) select which versions to build.
@@ -87,16 +97,20 @@ Package tests install each built package into a clean Docker container for the t
 3. `python3 -c 'import linxpad.core'` succeeds (Qt-free import, works headlessly)
 4. The `.desktop` file and icon are installed in the expected locations
 
-### Run all tests
+### Run all tests (non-interactive)
 
 ```bash
 make test-packages
+# or
+bash packaging/scripts/test-packages.sh
 ```
 
 ### Run tests interactively (select which to run)
 
 ```bash
-make test-packages-interactive
+make test-package
+# or
+bash packaging/scripts/test-packages.sh --interactive
 ```
 
 ### Run a single test script directly

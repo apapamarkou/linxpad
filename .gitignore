@@ -32,3 +32,6 @@ packaging/output/
 .vscode/
 *.swp
 *.swo
+
+# Dev container shell history (local only)
+.devcontainer/.bash_history

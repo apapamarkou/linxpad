@@ -1,0 +1,25 @@
+# Development dependencies for LinxPad.
+# Installed into the dev container at build time (see .devcontainer/Dockerfile).
+# Also usable on the host: pip install -r requirements-dev.txt
+
+# ── Runtime (duplicated here for convenience in the container) ────────────────
+PyQt6>=6.4
+watchdog>=3.0
+
+# ── Build / packaging ─────────────────────────────────────────────────────────
+hatchling          # build backend declared in pyproject.toml
+build              # PEP 517 frontend: python -m build
+twine              # upload to PyPI
+
+# ── Testing ───────────────────────────────────────────────────────────────────
+pytest>=7.0
+pytest-qt          # Qt widget testing helpers (headless via offscreen platform)
+pytest-cov         # coverage reports
+
+# ── Linting / formatting ──────────────────────────────────────────────────────
+ruff               # fast linter (configured in pyproject.toml)
+black              # formatter (configured in pyproject.toml)
+
+# ── Type checking (optional but useful with Pylance) ─────────────────────────
+mypy
+PyQt6-stubs        # type stubs for PyQt6

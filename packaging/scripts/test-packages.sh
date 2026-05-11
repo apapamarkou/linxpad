@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Test all built packages against clean Docker images.
-# Skips AppImage (no headless test possible).
+# Default: test all packages non-interactively.
 # Usage: test-packages.sh [--interactive]
 set -euo pipefail
 
@@ -19,6 +19,7 @@ fail()   { echo -e "${RED}✗ $1${NC}"; }
 conf_versions() { grep "^$1=" "$CONF" | cut -d= -f2 | tr ',' ' '; }
 
 INTERACTIVE="${1:-}"
+[[ "$INTERACTIVE" == "--interactive" ]] || INTERACTIVE=""
 PASS=0; FAIL=0; SKIP=0
 
 run_test() {

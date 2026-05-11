@@ -22,6 +22,19 @@ classifiers = [
 ]
 dependencies = ["PyQt6>=6.4", "watchdog>=3.0"]
 
+[project.optional-dependencies]
+# Install dev tools with: pip install -e ".[dev]"
+dev = [
+    "pytest>=7.0",
+    "pytest-qt",
+    "pytest-cov",
+    "ruff",
+    "black",
+    "build",
+    "twine",
+    "mypy",
+]
+
 [project.scripts]
 linxpad = "linxpad.main:main"
 

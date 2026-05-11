@@ -14,6 +14,61 @@ pip install -e ".[dev]"
 pip install PyQt6 watchdog ruff black pytest
 ```
 
+## Option A — VSCode Dev Container (recommended)
+
+Provides a fully reproducible environment without touching your host Python.
+
+### Host prerequisites (Fedora / openSUSE)
+
+1. Install Podman and the socket unit:
+   ```bash
+   # Fedora
+   sudo dnf install podman
+   # openSUSE
+   sudo zypper install podman
+
+   # Enable the rootless socket (required by the Dev Containers extension)
+   systemctl --user enable --now podman.socket
+   ```
+
+2. Tell VSCode to use Podman instead of Docker — add to your **host** VSCode
+   `settings.json`:
+   ```json
+   {
+       "dev.containers.dockerPath": "podman",
+       "docker.environment": {
+           "DOCKER_HOST": "unix:///run/user/${env:UID}/podman/podman.sock"
+       }
+   }
+   ```
+   Or set the environment variable in your shell profile:
+   ```bash
+   export DOCKER_HOST=unix:///run/user/$(id -u)/podman/podman.sock
+   ```
+
+3. Install the **Dev Containers** extension (`ms-vscode-remote.remote-containers`).
+
+### Opening the project in the container
+
+1. Open the `linxpad` folder in VSCode.
+2. Press `Ctrl+Shift+P` → **Dev Containers: Reopen in Container**.
+3. VSCode builds the image (first time ~2 min), then reopens inside it.
+4. The project is installed in editable mode automatically (`postCreateCommand`).
+
+All `make` targets, `pytest`, `ruff`, and `black` work immediately in the
+integrated terminal.
+
+### Rebuilding the container
+
+If you change `Dockerfile` or `requirements-dev.txt`:
+```
+Ctrl+Shift+P → Dev Containers: Rebuild Container
+```
+
+---
+
+## Option B — Local setup
+
 ## Setting up the development environment
 
 ```bash
@@ -42,13 +97,15 @@ PYTHONPATH=src python3 -m linxpad.main
 |--------|-------------|
 | `make install` | Install in editable mode + desktop entry |
 | `make uninstall` | Remove installed files |
+| `make wipe` | Remove installed files and config (`~/.config/linxpad`) |
 | `make test` | Run the test suite with pytest |
 | `make lint` | Check code style with ruff and black |
 | `make format` | Auto-fix style issues |
 | `make check` | Run lint then tests |
-| `make packages` | Interactive package builder |
-| `make test-packages` | Run all package installation tests |
-| `make test-packages-interactive` | Run selected package tests interactively |
+| `make packages` | Build all packages non-interactively |
+| `make package` | Interactive package builder |
+| `make test-packages` | Run all package installation tests non-interactively |
+| `make test-package` | Run selected package tests interactively |
 | `make release` | Full non-interactive CI release build |
 
 ## Running tests
@@ -88,4 +145,12 @@ rm -rf ~/.config/linxpad
 make uninstall
 ```
 
-This removes the pip-installed package, the desktop entry, and the application icon.
+This removes the pip-installed package, the desktop entry, and the application icons.
+
+To also delete configuration files (`~/.config/linxpad`):
+
+```bash
+make wipe
+# or
+./uninstall --wipe
+```

@@ -1,4 +1,4 @@
-.PHONY: test lint format check install uninstall release packages test-packages test-packages-interactive
+.PHONY: test lint format check install uninstall wipe release packages package test-packages test-package
 
 ICONS_DIR := $(HOME)/.local/share/icons
 APPS_DIR  := $(HOME)/.local/share/applications
@@ -15,10 +15,10 @@ install:
 	update-desktop-database $(APPS_DIR) 2>/dev/null || true
 
 uninstall:
-	python3 -m pip uninstall -y linxpad
-	rm -f $(ICONS_DIR)/linxpad.png
-	rm -f $(DESKTOP)
-	update-desktop-database $(APPS_DIR) 2>/dev/null || true
+	bash uninstall
+
+wipe:
+	bash uninstall --wipe
 
 test:
 	python3 -m pytest tests/ -v
@@ -39,8 +39,11 @@ release:
 packages:
 	bash packaging/scripts/packages.sh
 
+package:
+	bash packaging/scripts/packages.sh --interactive
+
 test-packages:
 	bash packaging/scripts/test-packages.sh
 
-test-packages-interactive:
+test-package:
 	bash packaging/scripts/test-packages.sh --interactive

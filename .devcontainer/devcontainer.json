@@ -1,0 +1,126 @@
+{
+    // ── Identity ──────────────────────────────────────────────────────────────
+    "name": "LinxPad Dev",
+    "build": {
+        "dockerfile": "Dockerfile",
+        // context is the repo root so the Dockerfile can COPY requirements-dev.txt
+        "context": ".."
+    },
+
+    // ── Podman / Docker runtime ───────────────────────────────────────────────
+    // Prerequisites on the host (run once):
+    //   systemctl --user enable --now podman.socket
+    //   export DOCKER_HOST=unix:///run/user/$(id -u)/podman/podman.sock
+    // VSCode setting (host settings.json):
+    //   "dev.containers.dockerPath": "podman"
+    "runArgs": [
+        // Podman rootless: map container UID to your real host UID automatically.
+        // This means files written inside the container are owned by you on the host.
+        "--userns=keep-id"
+    ],
+
+    // ── Workspace mount ───────────────────────────────────────────────────────
+    // relabel=shared is the Podman equivalent of the :z SELinux option.
+    // It tells SELinux to allow the container to read the bind-mounted directory.
+    // NOTE: consistency=cached is intentionally absent — it is Docker-only and
+    // causes Podman to reject the mount with exit code 1.
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,relabel=shared",
+    "workspaceFolder": "/workspace",
+
+    // ── Container user ────────────────────────────────────────────────────────
+    // The Dockerfile creates 'devuser' at UID 1000.
+    // --userns=keep-id remaps that to your real host UID at runtime,
+    // so updateRemoteUserUID handles any remaining mismatch.
+    "remoteUser": "devuser",
+    "updateRemoteUserUID": true,
+
+    // ── Environment variables ─────────────────────────────────────────────────
+    "remoteEnv": {
+        "PYTHONPATH": "/workspace/src",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONUNBUFFERED": "1"
+    },
+
+    // ── Post-create setup ─────────────────────────────────────────────────────
+    // Runs once after the container is first created.
+    // Installs linxpad in editable mode so `import linxpad` and the
+    // `linxpad` CLI command work immediately inside the container.
+    "postCreateCommand": "pip3 install --no-cache-dir -e /workspace",
+
+    // ── VSCode extensions ─────────────────────────────────────────────────────
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                // Python core
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-python.debugpy",
+
+                // Linting / formatting (matches project ruff + black config)
+                "charliermarsh.ruff",
+                "ms-python.black-formatter",
+
+                // Testing
+                "ms-python.pytest",
+
+                // Git
+                "eamodio.gitlens",
+                "mhutchie.git-graph",
+
+                // Containers (useful for working on the packaging scripts)
+                "ms-azuretools.vscode-docker",
+
+                // General quality-of-life
+                "streetsidesoftware.code-spell-checker",
+                "tamasfe.even-better-toml",
+                "redhat.vscode-yaml",
+                "ms-vscode.makefile-tools"
+            ],
+
+            // ── Editor / Python settings ──────────────────────────────────────
+            "settings": {
+                "python.defaultInterpreterPath": "/usr/bin/python3",
+
+                // black formatter (matches pyproject.toml line-length = 100)
+                "editor.formatOnSave": true,
+                "editor.defaultFormatter": "ms-python.black-formatter",
+                "[python]": {
+                    "editor.defaultFormatter": "ms-python.black-formatter",
+                    "editor.formatOnSave": true,
+                    "editor.codeActionsOnSave": {
+                        "source.fixAll.ruff": "explicit",
+                        "source.organizeImports.ruff": "explicit"
+                    }
+                },
+
+                // Ruff linter
+                "ruff.enable": true,
+                "ruff.lint.enable": true,
+
+                // Pytest
+                "python.testing.pytestEnabled": true,
+                "python.testing.pytestArgs": ["tests", "-v"],
+                "python.testing.unittestEnabled": false,
+                "python.testing.cwd": "/workspace",
+
+                // Editor
+                "editor.rulers": [100],
+                "editor.tabSize": 4,
+                "editor.insertSpaces": true,
+                "files.trimTrailingWhitespace": true,
+                "files.insertFinalNewline": true,
+
+                // Hide noise from the file explorer
+                "files.exclude": {
+                    "**/__pycache__": true,
+                    "**/*.pyc": true,
+                    "**/.pytest_cache": true,
+                    "**/.ruff_cache": true,
+                    "**/*.egg-info": true
+                },
+
+                "terminal.integrated.cwd": "/workspace"
+            }
+        }
+    }
+}
