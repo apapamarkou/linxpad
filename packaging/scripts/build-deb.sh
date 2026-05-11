@@ -28,9 +28,9 @@ WHEEL_DIR="$(mktemp -d)"
 python3 -m pip wheel "$REPO_ROOT" --no-deps -w "$WHEEL_DIR" -q
 
 docker run --rm \
-    -v "$REPO_ROOT:/src:ro" \
-    -v "$OUTPUT:/output" \
-    -v "$WHEEL_DIR:/wheels:ro" \
+    -v "$REPO_ROOT:/src:ro,z" \
+    -v "$OUTPUT:/output:z" \
+    -v "$WHEEL_DIR:/wheels:ro,z" \
     "$IMAGE" \
     bash -euo pipefail -c "
         export DEBIAN_FRONTEND=noninteractive

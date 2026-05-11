@@ -20,9 +20,9 @@ WHEEL_DIR="$(mktemp -d)"
 python3 -m pip wheel "$REPO_ROOT" --no-deps -w "$WHEEL_DIR" -q
 
 docker run --rm \
-    -v "$REPO_ROOT:/src:ro" \
-    -v "$OUTPUT:/output" \
-    -v "$WHEEL_DIR:/wheels:ro" \
+    -v "$REPO_ROOT:/src:ro,z" \
+    -v "$OUTPUT:/output:z" \
+    -v "$WHEEL_DIR:/wheels:ro,z" \
     "fedora:$FEDORA_VER" \
     bash -euo pipefail -c "
         dnf install -y rpm-build python3-pip git python3-rpm-macros

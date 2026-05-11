@@ -99,10 +99,10 @@ INNEREOF
 echo "→ Building Flatpak in Docker"
 docker run --rm \
     --privileged \
-    -v "$REPO_ROOT:/src:ro" \
-    -v "$OUTPUT:/output" \
-    -v "$WHEEL_DIR:/wheels:ro" \
-    -v "$INNER_SCRIPT:/build-inner.sh:ro" \
+    -v "$REPO_ROOT:/src:ro,z" \
+    -v "$OUTPUT:/output:z" \
+    -v "$WHEEL_DIR:/wheels:ro,z" \
+    -v "$INNER_SCRIPT:/build-inner.sh:ro,z" \
     ubuntu:24.04 \
     bash /build-inner.sh
 

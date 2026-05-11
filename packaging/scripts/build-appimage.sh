@@ -84,11 +84,11 @@ INNEREOF
 echo "→ Building fat AppImage in Docker (downloads base image — takes a few minutes)"
 docker run --rm \
     --privileged \
-    -v "$REPO_ROOT:/src:ro" \
-    -v "$OUTPUT:/output" \
-    -v "$WHEEL_DIR:/wheels:ro" \
-    -v "$APPIMG_META:/appmeta:ro" \
-    -v "$INNER_SCRIPT:/build-inner.sh:ro" \
+    -v "$REPO_ROOT:/src:ro,z" \
+    -v "$OUTPUT:/output:z" \
+    -v "$WHEEL_DIR:/wheels:ro,z" \
+    -v "$APPIMG_META:/appmeta:ro,z" \
+    -v "$INNER_SCRIPT:/build-inner.sh:ro,z" \
     ubuntu:24.04 \
     bash /build-inner.sh
 

@@ -58,7 +58,7 @@ echo "  Note: update source= URL and sha256sums after pushing the GitHub tag."
 if command -v docker >/dev/null 2>&1; then
     echo "→ Testing PKGBUILD with makepkg in Docker (archlinux)"
     docker run --rm \
-        -v "$PKGBUILD_DIR:/build" \
+        -v "$PKGBUILD_DIR:/build:z" \
         archlinux:latest \
         bash -euo pipefail -c "
             pacman -Sy --noconfirm base-devel python-pip python-hatchling 2>/dev/null
