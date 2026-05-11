@@ -81,6 +81,13 @@ class LauncherWindow(QMainWindow):
         self._worker.results_ready.connect(self._on_scan_done)
         self._worker.start()
 
+    # ── rescan ────────────────────────────────────────────────────────────────
+
+    def trigger_rescan(self) -> None:
+        """Start a background rescan if one is not already running."""
+        if not self._worker.isRunning():
+            self._worker.start()
+
     # ── icon theme ────────────────────────────────────────────────────────────
 
     @staticmethod

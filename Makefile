@@ -1,10 +1,13 @@
-.PHONY: test lint format check install uninstall wipe release packages package test-packages test-package
+.PHONY: run test lint format check install uninstall wipe release packages package test-packages test-package
 
 ICONS_DIR := $(HOME)/.local/share/icons
 APPS_DIR  := $(HOME)/.local/share/applications
 SRC_APP_ICON  := src/linxpad/icons/linxpad.png
 SRC_FOLDER_ICON  := src/linxpad/icons/linxpad-folder.png
 DESKTOP   := $(APPS_DIR)/linxpad.desktop
+
+run:
+	PYTHONPATH=src python3 -m linxpad.main
 
 install:
 	python3 -m pip install -e .

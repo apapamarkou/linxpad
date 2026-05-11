@@ -81,20 +81,23 @@ make install
 
 ## Running LinxPad
 
+From source without installing (fastest for development):
+
 ```bash
-linxpad
+make run
 ```
 
-Or directly from the source tree without installing:
+Or after `make install`:
 
 ```bash
-PYTHONPATH=src python3 -m linxpad.main
+linxpad
 ```
 
 ## Makefile targets
 
 | Target | Description |
 |--------|-------------|
+| `make run` | Run directly from source (no install needed) |
 | `make install` | Install in editable mode + desktop entry |
 | `make uninstall` | Remove installed files |
 | `make wipe` | Remove installed files and config (`~/.config/linxpad`) |

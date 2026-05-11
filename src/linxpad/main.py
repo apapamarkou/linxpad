@@ -8,6 +8,7 @@ if __name__ == "__main__" and __package__ is None:
     sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
     __package__ = "linxpad"
 
+from PyQt6.QtCore import QTimer
 from PyQt6.QtWidgets import QApplication
 
 from .core import LauncherState, ScannerWorker
@@ -58,15 +59,13 @@ def main() -> None:
     window.show()
 
     instance.show_requested.connect(window.show_window)
+    instance.rescan_requested.connect(window.trigger_rescan)
 
-    def _on_rescan():
-        results = scanner.scan()
-        if state.apply_scan_results(results):
-            window.refresh_display()
-
-    instance.rescan_requested.connect(_on_rescan)
-
-    watcher = DesktopWatcher(on_changed=_on_rescan)
+    # DesktopWatcher fires from a watchdog background thread.
+    # QTimer.singleShot marshals the call onto the Qt main thread,
+    # which then starts the ScannerWorker QThread — keeping the UI
+    # fully responsive during the scan.
+    watcher = DesktopWatcher(on_changed=lambda: QTimer.singleShot(0, window.trigger_rescan))
     watcher.start()
 
     app.aboutToQuit.connect(watcher.stop)

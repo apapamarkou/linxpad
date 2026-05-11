@@ -1,7 +1,7 @@
 """Tests for the linxpad --rescan headless entry point."""
 
 import sys
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -71,7 +71,8 @@ def test_main_no_rescan_flag_starts_qt(monkeypatch):
         patch("linxpad.main.UISettings"),
         patch("linxpad.main.LauncherState"),
         patch("linxpad.main.ScannerWorker"),
-        patch("linxpad.main.LauncherWindow"),
+        patch("linxpad.main.LauncherWindow") as MockWindow,
+        patch("linxpad.main.DesktopWatcher"),
     ):
         MockSI.return_value.is_primary.return_value = False
         with pytest.raises(SystemExit):
@@ -79,3 +80,39 @@ def test_main_no_rescan_flag_starts_qt(monkeypatch):
 
             main()
         MockQt.assert_called_once()
+
+
+def test_watcher_triggers_rescan_on_main_thread(monkeypatch):
+    """DesktopWatcher callback must route through QTimer.singleShot,
+    not call window methods directly from the watchdog thread."""
+    monkeypatch.setattr(sys, "argv", ["linxpad"])
+    captured_callback = {}
+    with (
+        patch("linxpad.main.QApplication"),
+        patch("linxpad.main.SingleInstance") as MockSI,
+        patch("linxpad.main.IconResolver"),
+        patch("linxpad.main.DesktopScanner"),
+        patch("linxpad.main.ConfigService"),
+        patch("linxpad.main.UISettings"),
+        patch("linxpad.main.LauncherState") as MockState,
+        patch("linxpad.main.ScannerWorker"),
+        patch("linxpad.main.LauncherWindow"),
+        patch("linxpad.main.DesktopWatcher") as MockWatcher,
+        patch("linxpad.main.QTimer") as MockTimer,
+    ):
+        MockSI.return_value.is_primary.return_value = False
+        MockState.return_value.is_first_run.return_value = False
+
+        def capture_watcher(on_changed):
+            captured_callback["fn"] = on_changed
+            return MagicMock()
+
+        MockWatcher.side_effect = capture_watcher
+        with pytest.raises(SystemExit):
+            from linxpad.main import main
+            main()
+
+    # The watcher callback must use QTimer.singleShot, not call Qt directly
+    assert "fn" in captured_callback
+    captured_callback["fn"]()
+    MockTimer.singleShot.assert_called_once()

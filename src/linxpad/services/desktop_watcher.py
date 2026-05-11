@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 
 _WATCH_DIRS = [
     "/usr/share/applications",
+    "/usr/local/share/applications",
     os.path.expanduser("~/.local/share/applications"),
 ]
 
