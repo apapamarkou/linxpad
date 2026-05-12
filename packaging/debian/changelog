@@ -1,5 +1,5 @@
-linxpad (1.0.0-1) unstable; urgency=medium
+linxpad (1.1.0) unstable; urgency=medium
 
-  * Initial Debian package release.
+  * Bug fix Debian package release.
 
  -- Andrianos Papamarkou <andrianos@example.com>  Wed, 01 Jan 2025 00:00:00 +0000

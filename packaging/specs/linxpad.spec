@@ -1,5 +1,5 @@
 Name:           linxpad
-Version:        1.0.0
+Version:        1.1.0
 Release:        1%{?dist}
 Summary:        A macOS-style fullscreen application launcher for Linux
 
@@ -52,5 +52,5 @@ gtk-update-icon-cache -f -t %{_datadir}/icons/hicolor &>/dev/null || :
 %{_datadir}/applications/linxpad.desktop
 
 %changelog
-* Wed Jan 01 2025 Andrianos Papamarkou <andrianos@example.com> - 1.0.0-1
-- Initial package release
+* Wed Jan 01 2025 Andrianos Papamarkou <andrianos@example.com> - 1.1.0
+- Bug fix package release
