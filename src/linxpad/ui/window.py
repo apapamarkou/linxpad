@@ -166,6 +166,7 @@ class LauncherWindow(QMainWindow):
         self._grid_view.drag_started.connect(self._show_flip_zones)
         self._grid_view.drag_ended.connect(self._hide_flip_zones)
         self._grid_view.background_clicked.connect(self._on_background_click)
+        self._grid_view.close_requested.connect(self._hide_self)
         self._dots = DotsIndicator()
         self._dots.page_requested.connect(self._grid_view.go_to_page)
         self._grid_view.anim_started.connect(lambda: self._grid_view.setScene(QGraphicsScene()))
@@ -187,6 +188,7 @@ class LauncherWindow(QMainWindow):
         self._folder_view.item_clicked.connect(self._on_folder_item_clicked)
         self._folder_view.reorder_requested.connect(self._on_folder_reorder)
         self._folder_view.background_clicked.connect(self._on_folder_background_click)
+        self._folder_view.close_requested.connect(self._on_folder_background_click)
 
         self._search_view = SearchView(
             search_service=self._search_service,

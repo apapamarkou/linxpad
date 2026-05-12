@@ -31,7 +31,7 @@ from PyQt6.QtCore import (
     Qt,
     pyqtSignal,
 )
-from PyQt6.QtGui import QDrag, QPixmap, QWheelEvent
+from PyQt6.QtGui import QDrag, QNativeGestureEvent, QPixmap, QWheelEvent
 from PyQt6.QtWidgets import QGraphicsScene, QGraphicsView, QWidget
 
 from .drag_handler import DragHandler
@@ -53,6 +53,7 @@ class GridView(QGraphicsView):
     background_clicked = pyqtSignal()  # click on empty grid area
     anim_started = pyqtSignal()
     anim_ended = pyqtSignal()
+    close_requested = pyqtSignal()  # pinch-to-close gesture
 
     def __init__(
         self,
@@ -88,6 +89,16 @@ class GridView(QGraphicsView):
         self.setStyleSheet("background: transparent; border: none;")
         self.setAcceptDrops(True)
         self.viewport().setAcceptDrops(True)
+
+        # Accumulated horizontal pixel delta for touchpad swipe gesture.
+        # A swipe must exceed this threshold (px) before flipping the page,
+        # preventing accidental flips from tiny touchpad movements.
+        self._swipe_accum: float = 0.0
+        self._SWIPE_THRESHOLD = 120
+
+        # Accumulated pinch zoom delta. Pinching in (negative total) closes.
+        self._pinch_accum: float = 0.0
+        self._PINCH_THRESHOLD = 0.3
 
         # Empty placeholder scene so the view is never sceneless
         self.setScene(QGraphicsScene(self))
@@ -130,6 +141,7 @@ class GridView(QGraphicsView):
 
     def go_to_page(self, index: int) -> None:
         if 0 <= index < len(self._pages) and index != self._current_page and not self._animating:
+            self._swipe_accum = 0.0
             self._animate_to_page(index)
 
     def next_page(self) -> None:
@@ -252,14 +264,50 @@ class GridView(QGraphicsView):
         anim_out.start()
         anim_in.start()
 
-    # ── wheel ─────────────────────────────────────────────────────────────────
+    # ── wheel / touchpad swipe ────────────────────────────────────────────────
 
     def wheelEvent(self, event: QWheelEvent) -> None:
-        if event.angleDelta().y() < 0:
-            self.next_page()
+        px = event.pixelDelta()
+        if px.x() != 0:
+            # Smooth touchpad scroll: accumulate horizontal pixels.
+            self._swipe_accum += px.x()
+            if self._swipe_accum <= -self._SWIPE_THRESHOLD:
+                self._swipe_accum = 0.0
+                self.next_page()
+            elif self._swipe_accum >= self._SWIPE_THRESHOLD:
+                self._swipe_accum = 0.0
+                self.prev_page()
+        elif px.y() != 0:
+            # Vertical smooth scroll — ignore (don't flip pages).
+            pass
         else:
-            self.prev_page()
+            # Classic click-wheel (angleDelta only): flip immediately.
+            delta = event.angleDelta()
+            if delta.x() != 0:
+                if delta.x() < 0:
+                    self.next_page()
+                else:
+                    self.prev_page()
+            elif delta.y() != 0:
+                if delta.y() < 0:
+                    self.next_page()
+                else:
+                    self.prev_page()
         event.accept()
+
+    def event(self, event) -> bool:
+        if isinstance(event, QNativeGestureEvent):
+            if event.gestureType() == Qt.NativeGestureType.ZoomNativeGesture:
+                self._pinch_accum += event.value()
+                if self._pinch_accum <= -self._PINCH_THRESHOLD:
+                    self._pinch_accum = 0.0
+                    self.close_requested.emit()
+                elif self._pinch_accum > 0:
+                    # Pinching out resets — no action
+                    self._pinch_accum = 0.0
+                event.accept()
+                return True
+        return super().event(event)
 
     # ── drag/drop ─────────────────────────────────────────────────────────────
 

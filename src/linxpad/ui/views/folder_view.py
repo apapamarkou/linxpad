@@ -19,7 +19,7 @@ to the window for remove-from-folder, background click to return to main.
 from __future__ import annotations
 
 from PyQt6.QtCore import QMimeData, Qt, pyqtSignal
-from PyQt6.QtGui import QDrag, QPixmap
+from PyQt6.QtGui import QDrag, QNativeGestureEvent, QPixmap
 from PyQt6.QtWidgets import QGraphicsView, QWidget
 
 from ..graphics.drag_handler import DragHandler
@@ -32,6 +32,7 @@ class FolderView(QGraphicsView):
     item_clicked = pyqtSignal(str, str)  # item_id, item_type
     reorder_requested = pyqtSignal(str, str, str)  # dragged_id, target_id, placement
     background_clicked = pyqtSignal()
+    close_requested = pyqtSignal()  # pinch-to-close gesture
 
     def __init__(
         self, cols: int, font_size: int, spacing: int, icon_resolver, parent: QWidget | None = None
@@ -58,6 +59,9 @@ class FolderView(QGraphicsView):
         self.setStyleSheet("background: #3d3d3d; border: 1px solid #555; border-radius: 12px;")
         self.setAcceptDrops(True)
         self.viewport().setAcceptDrops(True)
+
+        self._pinch_accum: float = 0.0
+        self._PINCH_THRESHOLD = 0.3
 
     # ── public API ────────────────────────────────────────────────────────────
 
@@ -94,6 +98,19 @@ class FolderView(QGraphicsView):
             self.setSceneRect(self._scene.sceneRect())
 
     # ── mouse ─────────────────────────────────────────────────────────────────
+
+    def event(self, event) -> bool:
+        if isinstance(event, QNativeGestureEvent):
+            if event.gestureType() == Qt.NativeGestureType.ZoomNativeGesture:
+                self._pinch_accum += event.value()
+                if self._pinch_accum <= -self._PINCH_THRESHOLD:
+                    self._pinch_accum = 0.0
+                    self.close_requested.emit()
+                elif self._pinch_accum > 0:
+                    self._pinch_accum = 0.0
+                event.accept()
+                return True
+        return super().event(event)
 
     def mousePressEvent(self, event) -> None:
         if event.button() == Qt.MouseButton.LeftButton and self._scene:
