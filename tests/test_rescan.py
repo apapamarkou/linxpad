@@ -110,6 +110,7 @@ def test_watcher_triggers_rescan_on_main_thread(monkeypatch):
         MockWatcher.side_effect = capture_watcher
         with pytest.raises(SystemExit):
             from linxpad.main import main
+
             main()
 
         # The watcher callback must use QTimer.singleShot, not call Qt directly
