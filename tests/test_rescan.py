@@ -71,7 +71,7 @@ def test_main_no_rescan_flag_starts_qt(monkeypatch):
         patch("linxpad.main.UISettings"),
         patch("linxpad.main.LauncherState"),
         patch("linxpad.main.ScannerWorker"),
-        patch("linxpad.main.LauncherWindow") as MockWindow,
+        patch("linxpad.main.LauncherWindow"),
         patch("linxpad.main.DesktopWatcher"),
     ):
         MockSI.return_value.is_primary.return_value = False
@@ -100,7 +100,7 @@ def test_watcher_triggers_rescan_on_main_thread(monkeypatch):
         patch("linxpad.main.DesktopWatcher") as MockWatcher,
         patch("linxpad.main.QTimer") as MockTimer,
     ):
-        MockSI.return_value.is_primary.return_value = False
+        MockSI.return_value.is_primary.return_value = True
         MockState.return_value.is_first_run.return_value = False
 
         def capture_watcher(on_changed):
@@ -112,7 +112,7 @@ def test_watcher_triggers_rescan_on_main_thread(monkeypatch):
             from linxpad.main import main
             main()
 
-    # The watcher callback must use QTimer.singleShot, not call Qt directly
-    assert "fn" in captured_callback
-    captured_callback["fn"]()
-    MockTimer.singleShot.assert_called_once()
+        # The watcher callback must use QTimer.singleShot, not call Qt directly
+        assert "fn" in captured_callback
+        captured_callback["fn"]()
+        MockTimer.singleShot.assert_called_once()
