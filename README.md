@@ -6,6 +6,7 @@ A macOS-style fullscreen application launcher for Linux, supporting both X11 and
 [![License](https://img.shields.io/github/license/apapamarkou/pipewire-controller?style=for-the-badge)](LICENSE)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/andrianos)
 ---
+
 <https://youtu.be/_Jiiq7-NmmA>
 
 | Video | Screenshots |
@@ -42,8 +43,8 @@ The requirements are automatically handled by the installers.
 Download the latest `linxpad-VERSION-linux.tar.gz` from the [Releases](https://github.com/apapamarkou/linxpad/releases) page, extract it, and run the installer:
 
 ```bash
-tar -xzf linxpad-1.1.0-linux.tar.gz
-cd linxpad-1.1.0-linux
+tar -xzf linxpad-1.0.0-linux.tar.gz
+cd linxpad-1.0.0-linux
 ./install
 ```
 
