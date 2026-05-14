@@ -113,11 +113,11 @@ bash packaging/scripts/test-packages.sh --interactive
 ### Run a single test script directly
 
 ```bash
-bash packaging/tests/test-fedora-rpm.sh    packaging/output/linxpad-1.0.0-1.fc43.noarch.rpm 43
-bash packaging/tests/test-opensuse-rpm.sh  packaging/output/linxpad-1.0.0-1.opensusetumbleweed.noarch.rpm tumbleweed
-bash packaging/tests/test-deb.sh           packaging/output/linxpad_1.0.0-1_all~24.04.deb 24.04
-bash packaging/tests/test-arch-pkg.sh      packaging/output/arch/linxpad-1.0.0-1-any.pkg.tar.zst
-bash packaging/tests/test-tarball.sh       packaging/output/linxpad-1.0.0-linux.tar.gz fedora:43 "Fedora 43"
+bash packaging/tests/test-fedora-rpm.sh    packaging/output/linxpad-1.1.0-1.fc43.noarch.rpm 43
+bash packaging/tests/test-opensuse-rpm.sh  packaging/output/linxpad-1.1.0-1.opensusetumbleweed.noarch.rpm tumbleweed
+bash packaging/tests/test-deb.sh           packaging/output/linxpad_1.1.0-1_all~24.04.deb 24.04
+bash packaging/tests/test-arch-pkg.sh      packaging/output/arch/linxpad-1.1.0-1-any.pkg.tar.zst
+bash packaging/tests/test-tarball.sh       packaging/output/linxpad-1.1.0-linux.tar.gz fedora:43 "Fedora 43"
 ```
 
 ### Test exit codes
