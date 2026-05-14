@@ -58,7 +58,6 @@ The installer detects your distribution, installs any missing dependencies, and 
 | DEB | Debian 12, 13 · Ubuntu 22.04, 24.04, 25.04 |
 | Arch | `PKGBUILD` manual |
 | AppImage | Any Linux Distro (x86\_64) |
-| Flatpak | Any Linux Distro with Flatpak installed |
 
 Download the appropriate package from the [Releases](https://github.com/apapamarkou/linxpad/releases) page and install with your package manager.
 

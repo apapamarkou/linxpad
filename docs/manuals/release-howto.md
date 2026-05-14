@@ -94,7 +94,6 @@ All built packages must pass before publishing. See [packaging-and-testing.md](p
    - `linxpad_1.1.0-1_all~13.deb`
    - `packaging/output/arch/linxpad-1.1.0-1-any.pkg.tar.zst`
    - `LinxPad-1.1.0-x86_64.AppImage`
-   - `LinxPad-1.1.0.flatpak`
 7. Click **Publish release**
 
 ## Adding new target distro versions

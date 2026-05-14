@@ -52,7 +52,6 @@ Presents a two-layer menu: first select the package type, then (for multi-versio
   6) Ubuntu .deb
   7) Arch PKGBUILD
   8) AppImage
-  9) Flatpak
   a) All of the above
 ```
 
@@ -67,7 +66,6 @@ bash packaging/scripts/build-deb.sh 24.04        # Ubuntu
 bash packaging/scripts/build-deb.sh 13            # Debian (integer = Debian)
 bash packaging/scripts/build-arch-pkgbuild.sh
 bash packaging/scripts/build-appimage.sh
-bash packaging/scripts/build-flatpak.sh
 bash packaging/scripts/build-tarball.sh           # binary tarball
 bash packaging/scripts/build-src-tarball.sh       # source tarball
 ```
@@ -84,7 +82,6 @@ All output lands in `packaging/output/`.
 | Ubuntu .deb | `linxpad_VERSION-1_all~VER.deb` |
 | Arch package | `packaging/output/arch/linxpad-VERSION-1-any.pkg.tar.zst` |
 | AppImage | `LinxPad-VERSION-x86_64.AppImage` |
-| Flatpak bundle | `LinxPad-VERSION.flatpak` |
 | Binary tarball | `linxpad-VERSION-linux.tar.gz` |
 | Source tarball | `linxpad-VERSION.tar.gz` |
 
@@ -120,7 +117,6 @@ bash packaging/tests/test-fedora-rpm.sh    packaging/output/linxpad-1.0.0-1.fc43
 bash packaging/tests/test-opensuse-rpm.sh  packaging/output/linxpad-1.0.0-1.opensusetumbleweed.noarch.rpm tumbleweed
 bash packaging/tests/test-deb.sh           packaging/output/linxpad_1.0.0-1_all~24.04.deb 24.04
 bash packaging/tests/test-arch-pkg.sh      packaging/output/arch/linxpad-1.0.0-1-any.pkg.tar.zst
-bash packaging/tests/test-flatpak.sh       packaging/output/LinxPad-1.0.0.flatpak
 bash packaging/tests/test-tarball.sh       packaging/output/linxpad-1.0.0-linux.tar.gz fedora:43 "Fedora 43"
 ```
 
@@ -145,10 +141,6 @@ The build script detects Debian vs Ubuntu by version string format (integer = De
 ### AppImage
 
 The AppImage bundles Python 3.11, PyQt6, Qt6 libraries, and watchdog. It is built inside `ubuntu:24.04` using `python-appimage`. No headless test is possible for AppImage — it is excluded from `test-packages`.
-
-### Flatpak
-
-Built inside Docker with `--disable-rofiles-fuse`. Wheels are pre-downloaded at the Docker level to work around Flatpak's network-isolated module builds. The icon is installed as `io.github.apapamarkou.linxpad.png` and the `Icon=` key in the desktop file is patched with `desktop-file-edit`.
 
 ### Binary tarball
 

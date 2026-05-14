@@ -93,8 +93,6 @@ linxpad/
     │   ├── rules                    # Debhelper build rules
     │   └── changelog                # Debian changelog
     │
-    ├── flatpak/
-    │   └── io.github.apapamarkou.linxpad.yaml   # Flatpak manifest
     │
     ├── scripts/                     # Build and orchestration scripts
     │   ├── build-fedora-rpm.sh      # Builds RPM for a given Fedora version
@@ -102,7 +100,6 @@ linxpad/
     │   ├── build-deb.sh             # Builds .deb for Debian or Ubuntu
     │   ├── build-arch-pkgbuild.sh   # Generates PKGBUILD and builds Arch package
     │   ├── build-appimage.sh        # Builds fat AppImage (bundles Python + Qt)
-    │   ├── build-flatpak.sh         # Builds Flatpak bundle
     │   ├── build-tarball.sh         # Builds binary tarball with installer
     │   ├── build-src-tarball.sh     # Builds source tarball via git archive
     │   ├── packages.sh              # Interactive package builder menu
@@ -114,7 +111,6 @@ linxpad/
     │   ├── test-opensuse-rpm.sh
     │   ├── test-deb.sh
     │   ├── test-arch-pkg.sh
-    │   ├── test-flatpak.sh
     │   └── test-tarball.sh
     │
     └── output/                      # Built packages land here (git-ignored)

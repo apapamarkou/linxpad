@@ -86,14 +86,13 @@ if [[ $INTERACTIVE -eq 1 ]]; then
     echo "  6) Ubuntu .deb"
     echo "  7) Arch PKGBUILD"
     echo "  8) AppImage"
-    echo "  9) Flatpak"
     echo "  a) All of the above"
     echo ""
     ask "Select package type(s) (e.g. 1 4 5 or a):"
     read -r choices
-    [[ "$choices" == "a" ]] && choices="1 2 3 4 5 6 7 8 9"
+    [[ "$choices" == "a" ]] && choices="1 2 3 4 5 6 7 8"
 else
-    choices="1 2 3 4 5 6 7 8 9"
+    choices="1 2 3 4 5 6 7 8"
 fi
 
 mkdir -p "$OUTPUT"
@@ -106,7 +105,6 @@ mkdir -p "$OUTPUT"
 [[ "$choices" == *"6"* ]] && pick_versions "Ubuntu"   "ubuntu-versions"   "$SCRIPTS/build-deb.sh"
 [[ "$choices" == *"7"* ]] && run "Arch PKGBUILD" "$SCRIPTS/build-arch-pkgbuild.sh"
 [[ "$choices" == *"8"* ]] && run "AppImage"      "$SCRIPTS/build-appimage.sh"
-[[ "$choices" == *"9"* ]] && run "Flatpak"       "$SCRIPTS/build-flatpak.sh"
 
 # ── Summary ───────────────────────────────────────────────────────────────
 header "Output"

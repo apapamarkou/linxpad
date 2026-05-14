@@ -55,7 +55,6 @@ run "Source tarball"  "$SCRIPTS/build-src-tarball.sh"
 run "Binary tarball"  "$SCRIPTS/build-tarball.sh"
 run "Arch PKGBUILD"   "$SCRIPTS/build-arch-pkgbuild.sh"
 run "AppImage"        "$SCRIPTS/build-appimage.sh"
-run "Flatpak"         "$SCRIPTS/build-flatpak.sh"
 
 for ver in $(conf_versions "opensuse-versions"); do
     run "openSUSE $ver RPM" "$SCRIPTS/build-opensuse-rpm.sh" "$ver"

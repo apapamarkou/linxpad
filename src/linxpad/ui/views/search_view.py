@@ -10,6 +10,7 @@
 # https://github.com/apapamarkou/linxpad
 # https://apapamarkou.github.io/linxpad/
 
+import os
 import subprocess
 import urllib.parse
 
@@ -20,10 +21,16 @@ from ..components import FileRow, SearchRow, SectionHeader, WebResultRow, WebSea
 from ..services import SearchService, WebSearchController
 from ..theme import ROW_NORMAL, ROW_SELECTED
 
+# When running from an AppImage, LD_LIBRARY_PATH points to bundled libs.
+# gtk-launch/xdg-open are host binaries — strip it to avoid GLib conflicts.
+_HOST_ENV = {k: v for k, v in os.environ.items() if k != "LD_LIBRARY_PATH"}
+if "APPDIR" in os.environ:
+    _HOST_ENV["PATH"] = os.environ.get("PATH_ORIG") or os.environ.get("PATH", "")
+
 
 def _open(cmd: list) -> None:
     try:
-        subprocess.Popen(cmd)
+        subprocess.Popen(cmd, env=_HOST_ENV)
     except Exception:
         pass
 

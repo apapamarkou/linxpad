@@ -43,15 +43,14 @@ if [[ -n "$INTERACTIVE" ]]; then
     echo "  3) Debian .debs"
     echo "  4) Ubuntu .debs"
     echo "  5) Arch package"
-    echo "  6) Flatpak"
-    echo "  7) Tarball installer"
+    echo "  6) Tarball installer"
     echo "  a) All"
     echo ""
     echo -e "${YELLOW}Select tests to run (e.g. 1 3 or a):${NC}"
     read -r choices
-    [[ "$choices" == "a" ]] && choices="1 2 3 4 5 6 7"
+    [[ "$choices" == "a" ]] && choices="1 2 3 4 5 6"
 else
-    choices="1 2 3 4 5 6 7"
+    choices="1 2 3 4 5 6"
 fi
 
 # ── Fedora RPMs ───────────────────────────────────────────────────────────────
@@ -122,20 +121,9 @@ if [[ "$choices" == *"5"* ]]; then
     fi
 fi
 
-# ── Flatpak ───────────────────────────────────────────────────────────────────
-if [[ "$choices" == *"6"* ]]; then
-    header "Flatpak"
-    pkg="$(ls "$OUTPUT"/LinxPad-*.flatpak 2>/dev/null | head -1)"
-    if [[ -n "$pkg" ]]; then
-        run_test "Flatpak" "$TESTS/test-flatpak.sh" "$pkg"
-    else
-        warn "No Flatpak found in $OUTPUT — skipping"
-        SKIP=$((SKIP + 1))
-    fi
-fi
 
 # ── Tarball installer ────────────────────────────────────────────────────────
-if [[ "$choices" == *"7"* ]]; then
+if [[ "$choices" == *"6"* ]]; then
     header "Tarball installer"
     pkg="$(ls "$OUTPUT"/linxpad-*-linux.tar.gz 2>/dev/null | head -1)"
     if [[ -z "$pkg" ]]; then
