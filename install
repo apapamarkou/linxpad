@@ -110,7 +110,7 @@ install_deps_fedora() {
     [[ $MISSING_PYQT6    -eq 1 ]] && pkgs+=(python3-pyqt6)
     [[ $MISSING_WATCHDOG -eq 1 ]] && pkgs+=(python3-watchdog)
     info "Installing dependencies for Fedora..."
-    dnf install -y "${pkgs[@]}" &>/dev/null
+    sudo dnf install -y "${pkgs[@]}"
 }
 
 install_deps_opensuse() {
@@ -120,7 +120,7 @@ install_deps_opensuse() {
     [[ $MISSING_PYQT6    -eq 1 ]] && pkgs+=(python3-qt6)
     [[ $MISSING_WATCHDOG -eq 1 ]] && pkgs+=(python3-watchdog)
     info "Installing dependencies for openSUSE..."
-    zypper install -y "${pkgs[@]}" &>/dev/null
+    sudo zypper install -y "${pkgs[@]}"
 }
 
 install_deps_debian() {
@@ -130,7 +130,7 @@ install_deps_debian() {
     [[ $MISSING_PYQT6    -eq 1 ]] && pkgs+=(python3-pyqt6)
     [[ $MISSING_WATCHDOG -eq 1 ]] && pkgs+=(python3-watchdog)
     info "Installing dependencies for Debian/Ubuntu..."
-    apt-get install -y "${pkgs[@]}" &>/dev/null
+    sudo apt-get install -y "${pkgs[@]}"
 }
 
 install_deps_arch() {
@@ -140,7 +140,7 @@ install_deps_arch() {
     [[ $MISSING_PYQT6    -eq 1 ]] && pkgs+=(python-pyqt6)
     [[ $MISSING_WATCHDOG -eq 1 ]] && pkgs+=(python-watchdog)
     info "Installing dependencies for Arch..."
-    pacman -S --noconfirm "${pkgs[@]}" &>/dev/null
+    sudo pacman -S --noconfirm "${pkgs[@]}"
 }
 
 if [[ $MISSING_DEPS -gt 0 ]]; then
@@ -220,6 +220,18 @@ fi
 
 update-desktop-database "$APPS_DIR" 2>/dev/null || true
 gtk-update-icon-cache -f -t "$HOME/.local/share/icons/hicolor" 2>/dev/null || true
+
+# ── PATH setup ───────────────────────────────────────────────────────────────
+
+PATH_LINE='export PATH="$HOME/.local/bin:$PATH"'
+PROFILE="$HOME/.profile"
+
+if ! grep -qF "$PATH_LINE" "$PROFILE" 2>/dev/null; then
+    echo "" >> "$PROFILE"
+    echo "$PATH_LINE" >> "$PROFILE"
+    ok "Added ~/.local/bin to PATH in $PROFILE"
+    warn "Restart your session (or run: export PATH=\"\$HOME/.local/bin:\$PATH\") for linxpad to be available in the terminal."
+fi
 
 ok "LinxPad installed successfully!"
 echo ""

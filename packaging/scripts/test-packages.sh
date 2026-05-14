@@ -156,4 +156,10 @@ echo -e "  ${GREEN}Passed:  $PASS${NC}"
 echo -e "  ${RED}Failed:  $FAIL${NC}"
 echo -e "  ${YELLOW}Skipped: $SKIP${NC}"
 echo ""
-[[ $FAIL -eq 0 ]] && ok "All tests passed" || { fail "$FAIL test(s) failed"; exit 1; }
+if [[ $FAIL -gt 0 ]]; then
+    fail "$FAIL test(s) failed"; exit 1
+elif [[ $PASS -eq 0 ]]; then
+    fail "No packages found to test — run 'make packages' first"; exit 1
+else
+    ok "All tests passed"
+fi
