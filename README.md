@@ -43,8 +43,8 @@ The requirements are automatically handled by the installers.
 Download the latest `linxpad-VERSION-linux.tar.gz` from the [Releases](https://github.com/apapamarkou/linxpad/releases) page, extract it, and run the installer:
 
 ```bash
-tar -xzf linxpad-1.0.0-linux.tar.gz
-cd linxpad-1.0.0-linux
+tar -xzf linxpad-1.1.0-linux.tar.gz
+cd linxpad-1.1.0-linux
 ./install
 ```
 
