@@ -18,8 +18,6 @@ env/
 # Pytest
 .pytest_cache/
 
-# flatpak builder
-.flatpak-builder/
 
 # Ruff / Black
 .ruff_cache/

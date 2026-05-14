@@ -26,16 +26,6 @@ import os
 import pathlib
 import subprocess
 
-# When running from an AppImage, LD_LIBRARY_PATH points to bundled libs.
-# gtk-launch is a host binary — strip it so there is no GLib version conflict.
-_HOST_ENV = {k: v for k, v in os.environ.items() if k != "LD_LIBRARY_PATH"}
-if "APPDIR" in os.environ:
-    _HOST_ENV["PATH"] = os.environ.get("PATH_ORIG") or os.environ.get("PATH", "")
-
-
-def _launch_cmd(cmd: list) -> list:
-    return cmd
-
 from PyQt6.QtCore import QEasingCurve, QPoint, QPropertyAnimation, Qt, QTimer
 from PyQt6.QtGui import QCursor, QIcon
 from PyQt6.QtWidgets import (
@@ -65,6 +55,16 @@ from .theme import (
 )
 from .views.folder_view import FolderView
 from .views.search_view import SearchView
+
+# When running from an AppImage, LD_LIBRARY_PATH points to bundled libs.
+# gtk-launch is a host binary — strip it so there is no GLib version conflict.
+_HOST_ENV = {k: v for k, v in os.environ.items() if k != "LD_LIBRARY_PATH"}
+if "APPDIR" in os.environ:
+    _HOST_ENV["PATH"] = os.environ.get("PATH_ORIG") or os.environ.get("PATH", "")
+
+
+def _launch_cmd(cmd: list) -> list:
+    return cmd
 
 
 class _Nav:
@@ -469,7 +469,9 @@ class LauncherWindow(QMainWindow):
             self.refresh_display()
         else:
             try:
-                subprocess.Popen(_launch_cmd(["gtk-launch", self.state.apps[item_id].exec]), env=_HOST_ENV)
+                subprocess.Popen(
+                    _launch_cmd(["gtk-launch", self.state.apps[item_id].exec]), env=_HOST_ENV
+                )
             except Exception:
                 pass
             self._hide_self()
@@ -480,7 +482,9 @@ class LauncherWindow(QMainWindow):
             self.refresh_display()
         else:
             try:
-                subprocess.Popen(_launch_cmd(["gtk-launch", self.state.apps[item_id].exec]), env=_HOST_ENV)
+                subprocess.Popen(
+                    _launch_cmd(["gtk-launch", self.state.apps[item_id].exec]), env=_HOST_ENV
+                )
             except Exception:
                 pass
             self._hide_self()
