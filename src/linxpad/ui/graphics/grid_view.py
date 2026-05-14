@@ -268,8 +268,9 @@ class GridView(QGraphicsView):
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         px = event.pixelDelta()
+        angle = event.angleDelta()
         if px.x() != 0:
-            # Smooth touchpad scroll: accumulate horizontal pixels.
+            # Smooth touchpad horizontal swipe: accumulate pixels.
             self._swipe_accum += px.x()
             if self._swipe_accum <= -self._SWIPE_THRESHOLD:
                 self._swipe_accum = 0.0
@@ -277,22 +278,18 @@ class GridView(QGraphicsView):
             elif self._swipe_accum >= self._SWIPE_THRESHOLD:
                 self._swipe_accum = 0.0
                 self.prev_page()
-        elif px.y() != 0:
-            # Vertical smooth scroll — ignore (don't flip pages).
-            pass
-        else:
-            # Classic click-wheel (angleDelta only): flip immediately.
-            delta = event.angleDelta()
-            if delta.x() != 0:
-                if delta.x() < 0:
-                    self.next_page()
-                else:
-                    self.prev_page()
-            elif delta.y() != 0:
-                if delta.y() < 0:
-                    self.next_page()
-                else:
-                    self.prev_page()
+        elif angle.x() != 0:
+            # Horizontal angleDelta (XFCE/X11 trackpad two-finger swipe).
+            if angle.x() < 0:
+                self.next_page()
+            else:
+                self.prev_page()
+        elif angle.y() != 0:
+            # Classic mouse wheel vertical scroll.
+            if angle.y() < 0:
+                self.next_page()
+            else:
+                self.prev_page()
         event.accept()
 
     def event(self, event) -> bool:

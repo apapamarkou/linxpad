@@ -42,7 +42,7 @@ export DEBIAN_FRONTEND=noninteractive
 
 apt-get update -qq
 apt-get install -y -qq python3-pip python3-dev wget file patchelf \\
-    libfuse2 desktop-file-utils squashfs-tools libglib2.0-0
+    libfuse2 desktop-file-utils squashfs-tools libglib2.0-0 libxcb-cursor0
 
 pip3 install --quiet --break-system-packages python-appimage
 
@@ -67,10 +67,10 @@ chmod +x "\$BUILT"
 "\$BUILT" --appimage-extract
 APPDIR=\$WORKDIR/squashfs-root
 
-# Bundle missing GLib shared libraries
+# Bundle missing system libraries (GLib + xcb-cursor required by Qt6 >= 6.5)
 mkdir -p \$APPDIR/usr/lib
-for lib in libgthread-2.0.so.0 libglib-2.0.so.0 libgmodule-2.0.so.0 libgobject-2.0.so.0; do
-    src=\$(find /usr/lib /lib -name "\$lib" 2>/dev/null | head -1 || true)
+for lib in libgthread-2.0.so.0 libglib-2.0.so.0 libgmodule-2.0.so.0 libgobject-2.0.so.0 libxcb-cursor.so.0; do
+    src=\$(find /usr/lib /usr/lib/x86_64-linux-gnu /lib -name "\$lib" 2>/dev/null | head -1 || true)
     [ -n "\$src" ] && cp -L "\$src" \$APPDIR/usr/lib/ || true
 done
 
