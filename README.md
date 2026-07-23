@@ -2,7 +2,7 @@
 
 A macOS-style fullscreen application launcher for Linux, supporting both X11 and Wayland sessions.
 
-[![Release](https://img.shields.io/github/v/release/apapamarkou/linxpad?style=for-the-badge)](https://github.com/apapamarkou/linxpad/releases)
+[![GitHub Tag](https://img.shields.io/github/v/tag/apapamarkou/linxpad?style=for-the-badge)](https://github.com/apapamarkou/linxpad/tags)
 [![License](https://img.shields.io/github/license/apapamarkou/linxpad?style=for-the-badge)](LICENSE)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/andrianos)
 ---
