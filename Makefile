@@ -1,4 +1,4 @@
-.PHONY: run test lint format check install uninstall wipe release packages package test-packages test-package
+.PHONY: run test lint format check install uninstall wipe release packages package test-packages test-package test-appimage
 
 ICONS_DIR := $(HOME)/.local/share/icons
 APPS_DIR  := $(HOME)/.local/share/applications
@@ -50,3 +50,6 @@ test-packages:
 
 test-package:
 	bash packaging/scripts/test-packages.sh --interactive
+
+test-appimage:
+	bash packaging/tests/test-appimage.sh packaging/output/LinxPad-*.AppImage
