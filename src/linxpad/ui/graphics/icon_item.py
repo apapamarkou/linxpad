@@ -25,7 +25,7 @@ from PyQt6.QtCore import QPointF, QRectF, QSizeF, Qt, pyqtSignal
 from PyQt6.QtGui import QColor, QFont, QPainter, QPen, QPixmap
 from PyQt6.QtWidgets import QGraphicsWidget, QStyleOptionGraphicsItem, QWidget
 
-from ..components.icon_utils import app_pixmap, folder_pixmap
+from ..components.icon_utils import app_pixmap, folder_collage_pixmap, folder_pixmap
 from ..theme import (
     C_DROP_TARGET_BG,
     C_DROP_TARGET_BORDER,
@@ -244,6 +244,10 @@ class IconItem(QGraphicsWidget):
     def _load_pixmap(self) -> None:
         icon_size = int(self._cell * 0.55)
         if self._item.get("type") == "folder":
-            self._pixmap = folder_pixmap(icon_size)
+            children = self._item.get("children", [])
+            if children:
+                self._pixmap = folder_collage_pixmap(children, icon_size, self._icon_resolver)
+            else:
+                self._pixmap = folder_pixmap(icon_size)
         else:
             self._pixmap = app_pixmap(self._item, icon_size, self._icon_resolver)

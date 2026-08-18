@@ -104,7 +104,7 @@ class LauncherState:
     def get_main_items(self) -> list[dict]:
         """Flat list of all main-view items sorted by sort_id."""
         items = [{**a.to_dict(), "type": "app"} for a in self.apps.values() if a.folder_id is None]
-        items += [{**f.to_dict(), "type": "folder"} for f in self.folders.values()]
+        items += [self._folder_dict(f) for f in self.folders.values()]
         return sorted(items, key=lambda x: x["sortId"])
 
     def get_main_items_by_page(self) -> list[list[dict]]:
@@ -408,6 +408,15 @@ class LauncherState:
                 return base + slot
         # Page full — spill to next page
         return self._next_slot_on_page(page + 1)
+
+    def _folder_dict(self, folder) -> dict:
+        """Folder dict with first 4 child app dicts embedded as 'children'."""
+        children = [
+            {**self.apps[aid].to_dict(), "type": "app"}
+            for aid in folder.app_ids[:4]
+            if aid in self.apps
+        ]
+        return {**folder.to_dict(), "type": "folder", "children": children}
 
     def _repair_folder_ids(self) -> None:
         for folder_id, folder in self.folders.items():

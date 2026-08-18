@@ -89,6 +89,45 @@ def load_folder_icon(label, size: int) -> None:
     label.setPixmap(pix)
 
 
+def folder_collage_pixmap(children: list[dict], size: int, icon_resolver=None) -> QPixmap:
+    """2×2 collage of up to 4 child app icons on a rounded folder background."""
+    pix = QPixmap(size, size)
+    pix.fill(Qt.GlobalColor.transparent)
+    p = QPainter(pix)
+    p.setRenderHint(QPainter.RenderHint.Antialiasing)
+
+    # Rounded background
+    from PyQt6.QtGui import QPainterPath
+
+    path = QPainterPath()
+    path.addRoundedRect(0, 0, size, size, size * 0.18, size * 0.18)
+    p.fillPath(path, QColor(80, 80, 80, 200))
+
+    n = min(len(children), 4)
+    pad = int(size * 0.12)
+    gap = int(size * 0.04)
+    child_size = (size - 2 * pad - gap) // 2
+
+    for i, child in enumerate(children[:n]):
+        col, row = i % 2, i // 2
+        x = pad + col * (child_size + gap)
+        y = pad + row * (child_size + gap)
+        child_px = app_pixmap(child, child_size, icon_resolver)
+        p.drawPixmap(
+            x,
+            y,
+            child_px.scaled(
+                child_size,
+                child_size,
+                Qt.AspectRatioMode.KeepAspectRatio,
+                Qt.TransformationMode.SmoothTransformation,
+            ),
+        )
+
+    p.end()
+    return pix
+
+
 def folder_pixmap(size: int) -> QPixmap:
     """Return a QPixmap for a folder."""
     candidates = [
