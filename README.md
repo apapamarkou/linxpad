@@ -12,8 +12,8 @@ A macOS-style fullscreen application launcher for Linux, supporting both X11 and
 | Video | Screenshots |
 |--------|---------|
 |[![Watch the video](https://img.youtube.com/vi/_Jiiq7-NmmA/0.jpg)](https://www.youtube.com/watch?v=_Jiiq7-NmmA)|<img width="1920" height="1080" alt="Screenshot-Settings" src="https://github.com/user-attachments/assets/5d558029-1bc3-4560-85ca-f0a88052df84" />|
-|<img width="1920" height="1080" alt="Screenshot-OrganizeInPagesAndFolders" src="[https://github.com/user-attachments/assets/6c2af5e9-5008-415b-866a-dc627df9c6fb](https://github.com/apapamarkou/linxpad/blob/main/docs/images/01_Screenshot-MainView-OrganizeInPagesAndFolders.jpg)" />|<img width="1920" height="1080" alt="Screenshot-AppFolder" src="[https://github.com/user-attachments/assets/71cf7864-c0d1-4242-8b36-6a64ef3d7e48](https://github.com/apapamarkou/linxpad/blob/main/docs/images/02_Screenshot-AnAppFolder.jpg)" />|
-|<img width="1920" height="1080" alt="Screenshot-Search-Apps-and-Folders" src="[https://github.com/user-attachments/assets/51892dbd-2b9e-4140-84df-240b1ba43160](https://github.com/apapamarkou/linxpad/blob/main/docs/images/03_Screenshot-Search-Apps-and-Folders.jpg)" />|<img width="1920" height="1080" alt="Screenshot-Search-Web" src="[https://github.com/user-attachments/assets/88f7f5e9-a08c-4195-9aad-0f7ffd599a4f](https://github.com/apapamarkou/linxpad/blob/main/docs/images/04_Screenshot-Search-Web.jpg)" />|
+|<img width="1920" height="1080" alt="Screenshot-OrganizeInPagesAndFolders" src="https://github.com/apapamarkou/linxpad/blob/main/docs/images/01_Screenshot-MainView-OrganizeInPagesAndFolders.jpg" />|<img width="1920" height="1080" alt="Screenshot-AppFolder" src="https://github.com/apapamarkou/linxpad/blob/main/docs/images/02_Screenshot-AnAppFolder.jpg" />|
+|<img width="1920" height="1080" alt="Screenshot-Search-Apps-and-Folders" src="https://github.com/apapamarkou/linxpad/blob/main/docs/images/03_Screenshot-Search-Apps-and-Folders.jpg" />|<img width="1920" height="1080" alt="Screenshot-Search-Web" src="https://github.com/apapamarkou/linxpad/blob/main/docs/images/04_Screenshot-Search-Web.jpg" />|
 
 ## Features
 
