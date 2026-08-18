@@ -43,8 +43,8 @@ The requirements are automatically handled by the installers.
 Download the latest `linxpad-VERSION-linux.tar.gz` from the [Releases](https://github.com/apapamarkou/linxpad/releases) page, extract it, and run the installer:
 
 ```bash
-tar -xzf linxpad-1.1.0-linux.tar.gz
-cd linxpad-1.1.0-linux
+tar -xzf linxpad-1.3.0-linux.tar.gz
+cd linxpad-1.3.0-linux
 ./install
 ```
 
@@ -54,8 +54,8 @@ The installer detects your distribution, installs any missing dependencies, and 
 
 | Format | Distros |
 |--------|---------|
-| RPM | Fedora 42, 43 · openSUSE Tumbleweed |
-| DEB | Debian 12, 13 · Ubuntu 22.04, 24.04, 25.04 |
+| RPM | Fedora 43, 44 · openSUSE Tumbleweed |
+| DEB | Debian 13 · Ubuntu 24.04, 26.04 |
 | Arch | `PKGBUILD` manual |
 | AppImage | Any Linux Distro (x86\_64) |
 

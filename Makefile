@@ -3,7 +3,7 @@
 ICONS_DIR := $(HOME)/.local/share/icons
 APPS_DIR  := $(HOME)/.local/share/applications
 SRC_APP_ICON  := src/linxpad/icons/linxpad.png
-SRC_FOLDER_ICON  := src/linxpad/icons/linxpad-folder.png
+SRC_GLOW_ICON := src/linxpad/icons/linxpad-glow.png
 DESKTOP   := $(APPS_DIR)/linxpad.desktop
 
 run:
@@ -13,7 +13,7 @@ install:
 	python3 -m pip install -e .
 	mkdir -p $(ICONS_DIR) $(APPS_DIR)
 	cp $(SRC_APP_ICON) $(ICONS_DIR)/linxpad.png
-	cp $(SRC_FOLDER_ICON) $(ICONS_DIR)/linxpad-folder.png
+	cp $(SRC_GLOW_ICON) $(ICONS_DIR)/linxpad-glow.png
 	@printf '[Desktop Entry]\nType=Application\nName=LinxPad\nComment=Full screen applications files folders and web search launcher for desktops\nExec=linxpad\nIcon=$(ICONS_DIR)/linxpad.png\nCategories=Utility;\nTerminal=false\nStartupNotify=false\nStartupWMClass=LinxPad\n' > $(DESKTOP)
 	update-desktop-database $(APPS_DIR) 2>/dev/null || true
 

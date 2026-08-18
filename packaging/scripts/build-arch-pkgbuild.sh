@@ -41,8 +41,8 @@ package() {
     python -m pip install --no-deps --root="\$pkgdir" --prefix=/usr dist/linxpad-*.whl
     install -Dm644 src/linxpad/icons/linxpad.png \
         "\$pkgdir/usr/share/icons/hicolor/256x256/apps/linxpad.png"
-    install -Dm644 src/linxpad/icons/linxpad-folder.png \
-        "\$pkgdir/usr/share/icons/hicolor/256x256/apps/linxpad-folder.png"
+    install -Dm644 src/linxpad/icons/linxpad-glow.png \
+        "\$pkgdir/usr/share/icons/hicolor/256x256/apps/linxpad-glow.png"
     install -Dm644 packaging/specs/linxpad.desktop \
         "\$pkgdir/usr/share/applications/linxpad.desktop"
     install -Dm644 LICENSE \

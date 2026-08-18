@@ -24,7 +24,9 @@ override_dh_auto_install:
 		debian/linxpad/usr/share/applications/linxpad.desktop
 	install -Dm644 src/linxpad/icons/linxpad.png \
 		debian/linxpad/usr/share/icons/hicolor/256x256/apps/linxpad.png
-	install -Dm644 src/linxpad/icons/linxpad-folder.png \
-		debian/linxpad/usr/share/icons/hicolor/256x256/apps/linxpad-folder.png
+	if [ -f src/linxpad/icons/linxpad-glow.png ]; then \
+		install -Dm644 src/linxpad/icons/linxpad-glow.png \
+			debian/linxpad/usr/share/icons/hicolor/256x256/apps/linxpad-glow.png; \
+	fi
 
 override_dh_usrlocal:

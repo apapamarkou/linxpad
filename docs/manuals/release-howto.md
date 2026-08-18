@@ -19,20 +19,20 @@ pyproject.toml
 
 ```toml
 [project]
-version = "1.1.0"
+version = "1.3.0"
 ```
 
 Update it, then commit:
 
 ```bash
 git add pyproject.toml
-git commit -m "chore: bump version to 1.1.0"
+git commit -m "chore: bump version to 1.3.0"
 ```
 
 ## Step 2 — Tag the release
 
 ```bash
-git tag -a v1.1.0 -m "Release v1.1.0"
+git tag -a v1.3.0 -m "Release v1.3.0"
 git push origin main --tags
 ```
 
@@ -83,17 +83,19 @@ All built packages must pass before publishing. See [packaging-and-testing.md](p
 1. Go to [github.com/apapamarkou/linxpad/releases](https://github.com/apapamarkou/linxpad/releases)
 2. Click **Draft a new release**
 3. Select the tag you created in Step 2
-4. Set the release title to `v1.1.0`
+4. Set the release title to `v1.3.0`
 5. Write release notes (features, fixes, breaking changes)
 6. Upload all files from `packaging/output/`:
-   - `linxpad-1.1.0-linux.tar.gz` (binary tarball)
-   - `linxpad-1.1.0.tar.gz` (source tarball)
-   - `linxpad-1.1.0-1.fc43.noarch.rpm`
-   - `linxpad-1.1.0-1.opensusetumbleweed.noarch.rpm`
-   - `linxpad_1.1.0-1_all~24.04.deb`
-   - `linxpad_1.1.0-1_all~13.deb`
-   - `packaging/output/arch/linxpad-1.1.0-1-any.pkg.tar.zst`
-   - `LinxPad-1.1.0-x86_64.AppImage`
+   - `linxpad-1.3.0-linux.tar.gz` (binary tarball)
+   - `linxpad-1.3.0.tar.gz` (source tarball)
+   - `linxpad-1.3.0-1.fc43.noarch.rpm`
+   - `linxpad-1.3.0-1.fc44.noarch.rpm`
+   - `linxpad-1.3.0-1.opensusetumbleweed.noarch.rpm`
+   - `linxpad_1.3.0_all~24.04.deb`
+   - `linxpad_1.3.0_all~26.04.deb`
+   - `linxpad_1.3.0_all~13.deb`
+   - `packaging/output/arch/linxpad-1.3.0-1-any.pkg.tar.zst`
+   - `LinxPad-1.3.0-x86_64.AppImage`
 7. Click **Publish release**
 
 ## Adding new target distro versions

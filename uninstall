@@ -30,7 +30,7 @@ APPS_DIR="$HOME/.local/share/applications"
 
 info "Uninstalling LinxPad..."
 pip3 uninstall -y linxpad 2>/dev/null || python3 -m pip uninstall -y linxpad 2>/dev/null || true
-rm -f "$ICONS_DIR/linxpad.png" "$ICONS_DIR/linxpad-folder.png"
+rm -f "$ICONS_DIR/linxpad.png" "$ICONS_DIR/linxpad-glow.png"
 rm -f "$APPS_DIR/linxpad.desktop"
 update-desktop-database "$APPS_DIR" 2>/dev/null || true
 gtk-update-icon-cache -f -t "$HOME/.local/share/icons/hicolor" 2>/dev/null || true

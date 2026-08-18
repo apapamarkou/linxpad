@@ -1,3 +1,16 @@
+linxpad (1.3.0) unstable; urgency=medium
+
+  * New application icon (linxpad.png) and alternative glow icon (linxpad-glow.png).
+  * Removed linxpad-folder.png icon — folder icons now show a live preview collage of their contents.
+  * AppImage fixes: resolved startup failure on Debian and Ubuntu.
+  * Touchpad pinch-to-close gesture support.
+  * Added /usr/local/share/applications/ to desktop file detection.
+  * Added Ubuntu 26.04 package target.
+  * Removed Flatpak packaging support.
+  * Minor bug fixes and stability improvements.
+
+ -- Andrianos Papamarkou <andrianos@example.com>  Wed, 01 Jan 2025 00:00:00 +0000
+
 linxpad (1.1.0) unstable; urgency=medium
 
   * Bug fix Debian package release.

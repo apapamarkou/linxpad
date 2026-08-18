@@ -209,13 +209,13 @@ APPS_DIR="$HOME/.local/share/applications"
 mkdir -p "$ICONS_DIR" "$APPS_DIR"
 
 if [[ "$MODE" == "tarball" ]]; then
-    cp "$SCRIPT_DIR/linxpad.png"        "$ICONS_DIR/"
-    cp "$SCRIPT_DIR/linxpad-folder.png" "$ICONS_DIR/"
-    cp "$SCRIPT_DIR/linxpad.desktop"    "$APPS_DIR/"
+    cp "$SCRIPT_DIR/linxpad.png"       "$ICONS_DIR/"
+    cp "$SCRIPT_DIR/linxpad-glow.png"  "$ICONS_DIR/"
+    cp "$SCRIPT_DIR/linxpad.desktop"   "$APPS_DIR/"
 else
-    cp "$SCRIPT_DIR/src/linxpad/icons/linxpad.png"        "$ICONS_DIR/"
-    cp "$SCRIPT_DIR/src/linxpad/icons/linxpad-folder.png" "$ICONS_DIR/"
-    cp "$SCRIPT_DIR/packaging/specs/linxpad.desktop"      "$APPS_DIR/"
+    cp "$SCRIPT_DIR/src/linxpad/icons/linxpad.png"      "$ICONS_DIR/"
+    cp "$SCRIPT_DIR/src/linxpad/icons/linxpad-glow.png" "$ICONS_DIR/"
+    cp "$SCRIPT_DIR/packaging/specs/linxpad.desktop"    "$APPS_DIR/"
 fi
 
 update-desktop-database "$APPS_DIR" 2>/dev/null || true

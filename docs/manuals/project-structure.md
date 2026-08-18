@@ -62,7 +62,7 @@ linxpad/
 │   │
 │   └── icons/                       # Bundled application icons
 │       ├── linxpad.png
-│       └── linxpad-folder.png
+│       └── linxpad-glow.png
 │
 ├── tests/                           # Pytest test suite (headless)
 │   ├── test_config.py

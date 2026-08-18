@@ -1,5 +1,5 @@
 Name:           linxpad
-Version:        1.1.0
+Version:        1.3.0
 Release:        1%{?dist}
 Summary:        A macOS-style fullscreen application launcher for Linux
 
@@ -28,10 +28,12 @@ python3 -m pip install --no-build-isolation --prefix=%{buildroot}%{_prefix} .
 
 %install
 python3 -m pip install --no-build-isolation --root=%{buildroot} --prefix=%{_prefix} .
-install -Dm644 src/linxpad/icons/linxpad.png        %{buildroot}%{_datadir}/icons/hicolor/256x256/apps/linxpad.png
-install -Dm644 src/linxpad/icons/linxpad-folder.png %{buildroot}%{_datadir}/icons/hicolor/256x256/apps/linxpad-folder.png
-install -Dm644 packaging/specs/linxpad.desktop      %{buildroot}%{_datadir}/applications/linxpad.desktop
-install -Dm644 LICENSE                              %{buildroot}%{_datadir}/licenses/%{name}/LICENSE
+install -Dm644 src/linxpad/icons/linxpad.png      %{buildroot}%{_datadir}/icons/hicolor/256x256/apps/linxpad.png
+if [ -f src/linxpad/icons/linxpad-glow.png ]; then \
+    install -Dm644 src/linxpad/icons/linxpad-glow.png %{buildroot}%{_datadir}/icons/hicolor/256x256/apps/linxpad-glow.png; \
+fi
+install -Dm644 packaging/specs/linxpad.desktop    %{buildroot}%{_datadir}/applications/linxpad.desktop
+install -Dm644 LICENSE                            %{buildroot}%{_datadir}/licenses/%{name}/LICENSE
 
 %post
 update-desktop-database %{_datadir}/applications &>/dev/null || :
@@ -48,9 +50,18 @@ gtk-update-icon-cache -f -t %{_datadir}/icons/hicolor &>/dev/null || :
 %{python3_sitelib}/linxpad/
 %{python3_sitelib}/linxpad-*.dist-info/
 %{_datadir}/icons/hicolor/256x256/apps/linxpad.png
-%{_datadir}/icons/hicolor/256x256/apps/linxpad-folder.png
+%ghost %{_datadir}/icons/hicolor/256x256/apps/linxpad-glow.png
 %{_datadir}/applications/linxpad.desktop
 
 %changelog
+* Wed Jan 01 2025 Andrianos Papamarkou <andrianos@example.com> - 1.3.0
+- New application icon and alternative glow icon
+- Removed linxpad-folder.png icon — folder icons now show a live preview collage of their contents
+- AppImage fixes for Debian and Ubuntu
+- Touchpad pinch-to-close gesture
+- Added Ubuntu 26.04 package target
+- Removed Flatpak packaging support
+- Minor bug fixes
+
 * Wed Jan 01 2025 Andrianos Papamarkou <andrianos@example.com> - 1.1.0
 - Bug fix package release

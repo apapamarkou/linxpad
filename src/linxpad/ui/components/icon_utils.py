@@ -130,17 +130,6 @@ def folder_collage_pixmap(children: list[dict], size: int, icon_resolver=None) -
 
 def folder_pixmap(size: int) -> QPixmap:
     """Return a QPixmap for a folder."""
-    candidates = [
-        os.path.expanduser("~/.local/share/icons/hicolor/256x256/apps/linxpad-folder.png"),
-        os.path.expanduser("~/.local/share/icons/linxpad-folder.png"),
-        "/usr/share/icons/hicolor/256x256/apps/linxpad-folder.png",
-        os.path.normpath(
-            os.path.join(os.path.dirname(__file__), "..", "..", "icons", "linxpad-folder.png")
-        ),
-    ]
-    for path in candidates:
-        if os.path.exists(path):
-            return make_pixmap(path, size)
     qi = QIcon.fromTheme("folder")
     if not qi.isNull():
         return qi.pixmap(size, size)
