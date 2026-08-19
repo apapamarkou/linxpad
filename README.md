@@ -9,10 +9,8 @@ A macOS-style fullscreen application launcher for Linux, supporting both X11 and
 
 | Video | Screenshots |
 |--------|---------|
-|[![Watch the video](https://img.youtube.com/vi/_Jiiq7-NmmA/0.jpg)](https://www.youtube.com/watch?v=_Jiiq7-NmmA)|
-<img width="1920" height="1080" alt="Screenshot-Settings" src="https://github.com/apapamarkou/linxpad/blob/main/docs/images/05_Screenshot-Settings.jpg" />|
-|<img width="1920" height="1080" alt="Screenshot-OrganizeInPagesAndFolders" src="https://github.com/apapamarkou/linxpad/blob/main/docs/images/01_Screenshot-MainView-OrganizeInPagesAndFolders.jpg" />|
-<img width="1920" height="1080" alt="Screenshot-AppFolder" src="https://github.com/apapamarkou/linxpad/blob/main/docs/images/02_Screenshot-AnAppFolder.jpg" />|
+|[![Watch the video](https://img.youtube.com/vi/_Jiiq7-NmmA/0.jpg)](https://www.youtube.com/watch?v=_Jiiq7-NmmA)|<img width="1920" height="1080" alt="Screenshot-Settings" src="https://github.com/apapamarkou/linxpad/blob/main/docs/images/05_Screenshot-Settings.jpg" />|
+|<img width="1920" height="1080" alt="Screenshot-OrganizeInPagesAndFolders" src="https://github.com/apapamarkou/linxpad/blob/main/docs/images/01_Screenshot-MainView-OrganizeInPagesAndFolders.jpg" />|<img width="1920" height="1080" alt="Screenshot-AppFolder" src="https://github.com/apapamarkou/linxpad/blob/main/docs/images/02_Screenshot-AnAppFolder.jpg" />|
 |<img width="1920" height="1080" alt="Screenshot-Search-Apps-and-Folders" src="https://github.com/apapamarkou/linxpad/blob/main/docs/images/03_Screenshot-Search-Apps-and-Folders.jpg" />|<img width="1920" height="1080" alt="Screenshot-Search-Web" src="https://github.com/apapamarkou/linxpad/blob/main/docs/images/04_Screenshot-Search-Web.jpg" />|
 
 ## Features
