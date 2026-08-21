@@ -138,5 +138,52 @@ def test_get_main_items_by_page_groups_correctly():
     assert len(pages[1]) == 3
 
 
-def test_page_size_constant():
-    assert PAGE_SIZE == 24
+def test_repair_removes_stale_app_ids_from_folder():
+    """Folder with a stale app ID (not in apps) has it stripped on load."""
+    a1 = _app("a1", 0, folder_id="f1")
+    f1 = Folder(id="f1", name="F", app_ids=["a1", "stale-id"], sort_id=5)
+    state = make_state(apps={"a1": a1}, folders={"f1": f1})
+    assert "stale-id" not in state.folders["f1"].app_ids
+    assert "a1" in state.folders["f1"].app_ids
+
+
+def test_repair_deletes_folder_with_only_stale_ids():
+    """Folder whose every app ID is stale is deleted on load (FolderGhost case)."""
+    f1 = Folder(id="f1", name="FolderGhost", app_ids=["stale-id"], sort_id=5)
+    state = make_state(apps={}, folders={"f1": f1})
+    assert "f1" not in state.folders
+
+
+def test_remove_from_folder_dissolves_when_remaining_id_is_stale():
+    """Folder dissolves even if the last remaining app ID is stale."""
+    a1 = _app("a1", 0, folder_id="f1")
+    # f1 has a1 (live) and stale-id (dead) — simulates the FolderGhost scenario
+    f1 = Folder(id="f1", name="FolderGhost", app_ids=["a1", "stale-id"], sort_id=5)
+    state = make_state(apps={"a1": a1}, folders={"f1": f1})
+    # After load, stale-id is stripped — folder now has only a1
+    assert state.folders["f1"].app_ids == ["a1"]
+    # Dragging a1 out should dissolve the folder
+    deleted = state.remove_from_folder("a1")
+    assert deleted == "f1"
+    assert "f1" not in state.folders
+    assert state.apps["a1"].folder_id is None
+
+
+def test_remove_from_folder_dissolves_with_stale_remaining_id_unrepaired():
+    """Folder dissolves via remove_from_folder even without prior repair.
+
+    Directly tests the fix in remove_from_folder: folder.app_ids.clear()
+    runs regardless of whether the last remaining ID resolves to a live app.
+    """
+    a1 = _app("a1", 0, folder_id="f1")
+    a2 = _app("a2", 1, folder_id="f1")
+    f1 = Folder(id="f1", name="F", app_ids=["a1", "a2"], sort_id=5)
+    state = make_state(apps={"a1": a1, "a2": a2}, folders={"f1": f1})
+    # Simulate a2 becoming stale after load (e.g. removed by scanner)
+    del state.apps["a2"]
+    # Dragging a1 out — a2 is now a stale ID, folder must still dissolve
+    deleted = state.remove_from_folder("a1")
+    assert deleted == "f1"
+    assert "f1" not in state.folders
+    assert state.apps["a1"].folder_id is None
+

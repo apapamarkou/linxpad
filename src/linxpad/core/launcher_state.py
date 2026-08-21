@@ -233,7 +233,7 @@ class LauncherState:
                 if last_app:
                     last_app.folder_id = None
                     last_app.sort_id = self._next_slot_on_page(folder_page, exclude=folder_sort)
-                    folder.app_ids.clear()
+                folder.app_ids.clear()
         else:
             # Folder stays: append ejected app at the end of the folder's page
             app.folder_id = None
@@ -419,7 +419,11 @@ class LauncherState:
         return {**folder.to_dict(), "type": "folder", "children": children}
 
     def _repair_folder_ids(self) -> None:
-        for folder_id, folder in self.folders.items():
+        for folder_id, folder in list(self.folders.items()):
+            folder.app_ids = [aid for aid in folder.app_ids if aid in self.apps]
+            if not folder.app_ids:
+                del self.folders[folder_id]
+                continue
             for app_id in folder.app_ids:
                 app = self.apps.get(app_id)
                 if app and app.folder_id is None:
