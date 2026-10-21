@@ -13,11 +13,26 @@
 # https://apapamarkou.github.io/linxpad/
  
 # LinxPad installer — works from git clone or binary tarball.
-# Usage: ./install [--non-interactive]
+# Usage: ./install [--non-interactive] [--global]
 set -euo pipefail
 
 NON_INTERACTIVE=0
-[[ "${1:-}" == "--non-interactive" ]] && NON_INTERACTIVE=1
+GLOBAL=0
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --non-interactive)
+            NON_INTERACTIVE=1
+            shift
+            ;;
+        --global)
+            GLOBAL=1
+            shift
+            ;;
+        *)
+            die "Unknown option: $1"
+            ;;
+    esac
+done
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -185,7 +200,13 @@ fi
 
 info "Installing LinxPad..."
 
-PIP_INSTALL_ARGS=(--user --quiet)
+if [[ $GLOBAL -eq 1 ]]; then
+    PIP_INSTALL_ARGS=("--quiet")
+    TARGET_INFO="system-wide"
+else
+    PIP_INSTALL_ARGS=(--user --quiet)
+    TARGET_INFO="to user site-packages"
+fi
 # Newer distros mark system Python as externally managed; detect the marker.
 if python3 -c "
 import sysconfig, pathlib
@@ -197,43 +218,69 @@ raise SystemExit(1)
 fi
 
 if [[ "$MODE" == "tarball" ]]; then
-    pip3 install "${PIP_INSTALL_ARGS[@]}" "$WHEEL"
+    if [[ $GLOBAL -eq 1 ]]; then
+        sudo pip3 install "${PIP_INSTALL_ARGS[@]}" "$WHEEL"
+    else
+        pip3 install "${PIP_INSTALL_ARGS[@]}" "$WHEEL"
+    fi
 else
-    pip3 install "${PIP_INSTALL_ARGS[@]}" "$SCRIPT_DIR"
+    if [[ $GLOBAL -eq 1 ]]; then
+        sudo pip3 install "${PIP_INSTALL_ARGS[@]}" "$SCRIPT_DIR"
+    else
+        pip3 install "${PIP_INSTALL_ARGS[@]}" "$SCRIPT_DIR"
+    fi
 fi
 
 # ── Install assets ────────────────────────────────────────────────────────────
 
-ICONS_DIR="$HOME/.local/share/icons/hicolor/256x256/apps"
-APPS_DIR="$HOME/.local/share/applications"
+if [[ $GLOBAL -eq 1 ]]; then
+    ICONS_DIR="/usr/local/share/icons/hicolor/256x256/apps"
+    APPS_DIR="/usr/local/share/applications"
+    TARGET_USER=""
+    SUDO_PREFIX="sudo"
+else
+    ICONS_DIR="$HOME/.local/share/icons/hicolor/256x256/apps"
+    APPS_DIR="$HOME/.local/share/applications"
+    TARGET_USER="$HOME"
+    SUDO_PREFIX=""
+fi
 mkdir -p "$ICONS_DIR" "$APPS_DIR"
 
 if [[ "$MODE" == "tarball" ]]; then
-    cp "$SCRIPT_DIR/linxpad.png"       "$ICONS_DIR/"
-    cp "$SCRIPT_DIR/linxpad-glow.png"  "$ICONS_DIR/"
-    cp "$SCRIPT_DIR/linxpad.desktop"   "$APPS_DIR/"
+    $SUDO_PREFIX cp "$SCRIPT_DIR/linxpad.png"       "$ICONS_DIR/"
+    $SUDO_PREFIX cp "$SCRIPT_DIR/linxpad-glow.png"  "$ICONS_DIR/"
+    $SUDO_PREFIX cp "$SCRIPT_DIR/linxpad.desktop"   "$APPS_DIR/"
 else
-    cp "$SCRIPT_DIR/src/linxpad/icons/linxpad.png"      "$ICONS_DIR/"
-    cp "$SCRIPT_DIR/src/linxpad/icons/linxpad-glow.png" "$ICONS_DIR/"
-    cp "$SCRIPT_DIR/packaging/specs/linxpad.desktop"    "$APPS_DIR/"
+    $SUDO_PREFIX cp "$SCRIPT_DIR/src/linxpad/icons/linxpad.png"      "$ICONS_DIR/"
+    $SUDO_PREFIX cp "$SCRIPT_DIR/src/linxpad/icons/linxpad-glow.png" "$ICONS_DIR/"
+    $SUDO_PREFIX cp "$SCRIPT_DIR/packaging/specs/linxpad.desktop"    "$APPS_DIR/"
 fi
 
-update-desktop-database "$APPS_DIR" 2>/dev/null || true
-gtk-update-icon-cache -f -t "$HOME/.local/share/icons/hicolor" 2>/dev/null || true
+$SUDO_PREFIX update-desktop-database "$APPS_DIR" 2>/dev/null || true
+if [[ $GLOBAL -eq 1 ]]; then
+    $SUDO_PREFIX gtk-update-icon-cache -f -t "/usr/local/share/icons/hicolor" 2>/dev/null || true
+else
+    gtk-update-icon-cache -f -t "$HOME/.local/share/icons/hicolor" 2>/dev/null || true
+fi
 
 # ── PATH setup ───────────────────────────────────────────────────────────────
 
-PATH_LINE='export PATH="$HOME/.local/bin:$PATH"'
-PROFILE="$HOME/.profile"
+if [[ $GLOBAL -eq 1 ]]; then
+    # System-wide: bin is in /usr/local/bin which is typically already in PATH
+    ok "LinxPad installed system-wide. The executable is in /usr/local/bin"
+else
+    PATH_LINE='export PATH="$HOME/.local/bin:$PATH"'
+    PROFILE="$HOME/.profile"
 
-if ! grep -qF "$PATH_LINE" "$PROFILE" 2>/dev/null; then
-    echo "" >> "$PROFILE"
-    echo "$PATH_LINE" >> "$PROFILE"
-    ok "Added ~/.local/bin to PATH in $PROFILE"
-    warn "Restart your session (or run: export PATH=\"\$HOME/.local/bin:\$PATH\") for linxpad to be available in the terminal."
+    if ! grep -qF "$PATH_LINE" "$PROFILE" 2>/dev/null; then
+        echo "" >> "$PROFILE"
+        echo "$PATH_LINE" >> "$PROFILE"
+        ok "Added ~/.local/bin to PATH in $PROFILE"
+        warn "Restart your session (or run: export PATH=\"\$HOME/.local/bin:\$PATH\") for linxpad to be available in the terminal."
+    fi
 fi
 
-ok "LinxPad installed successfully!"
+ok "LinxPad installed $TARGET_INFO!"
 echo ""
 echo -e "  Run ${BOLD}linxpad${NC} to launch, or find it in your application menu."
 echo ""
