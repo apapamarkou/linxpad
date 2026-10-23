@@ -186,4 +186,3 @@ def test_remove_from_folder_dissolves_with_stale_remaining_id_unrepaired():
     assert deleted == "f1"
     assert "f1" not in state.folders
     assert state.apps["a1"].folder_id is None
-
