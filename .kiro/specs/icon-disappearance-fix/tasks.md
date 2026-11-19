@@ -97,7 +97,7 @@ _Write these tests BEFORE implementing any fix. Each test MUST FAIL on unfixed c
 
 _Write these tests BEFORE implementing any fix. Observe behavior on UNFIXED code for non-buggy inputs, then write tests that capture that behavior. These tests MUST PASS on unfixed code — they confirm the baseline behavior to preserve._
 
-- [ ] 5. Write preservation property tests: valid icon and SVG rendering (Bugs 1.1 & 1.2)
+- [x] 5. Write preservation property tests: valid icon and SVG rendering (Bugs 1.1 & 1.2)
   - **Property 2: Preservation** - Valid Icon and SVG Rendering
   - **IMPORTANT**: Follow observation-first methodology
   - **Test file**: `tests/test_icon_utils.py` (new)
@@ -114,7 +114,7 @@ _Write these tests BEFORE implementing any fix. Observe behavior on UNFIXED code
   - Mark task complete when tests are written, run, and passing on unfixed code
   - _Requirements: 3.1, 3.2, 3.6_
 
-- [ ] 6. Write preservation property tests: launcher state behavior (Bugs 1.3 & 1.4)
+- [x] 6. Write preservation property tests: launcher state behavior (Bugs 1.3 & 1.4)
   - **Property 2: Preservation** - Permanent Uninstall Removal and Non-Full Drag Insertion
   - **IMPORTANT**: Follow observation-first methodology
   - **Test file**: `tests/test_launcher_state.py` (extend)
@@ -128,7 +128,7 @@ _Write these tests BEFORE implementing any fix. Observe behavior on UNFIXED code
   - Mark task complete when tests are written, run, and passing on unfixed code
   - _Requirements: 3.3, 3.4, 3.7_
 
-- [ ] 7. Write preservation property tests: size parser behavior (Bug 1.5)
+- [x] 7. Write preservation property tests: size parser behavior (Bug 1.5)
   - **Property 2: Preservation** - Scalable Precedence and Valid NxN Parsing
   - **IMPORTANT**: Follow observation-first methodology
   - **Test file**: `tests/test_icons.py` (new)

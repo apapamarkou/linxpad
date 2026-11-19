@@ -6,6 +6,9 @@
 #   AssertionError: Dragged item x50 sort_id should remain 48 (page 0 is full), got 5.
 #   Bug 1.4: reorder allowed overflow onto full page (len(page_ids) > page_size misses == case).
 
+from hypothesis import given, settings
+from hypothesis import strategies as st
+
 from linxpad.core.launcher_state import PAGE_SIZE, LauncherState
 from linxpad.models import Application, Folder
 from linxpad.services import DesktopScanner, IconResolver
@@ -247,3 +250,151 @@ def test_c4_full_page_drag_overflow():
             f"App {uid} sort_id {a.sort_id} overflowed page 0 boundary. "
             "Bug 1.4."
         )
+
+
+# ── Phase 2: Preservation property tests (Task 6) ────────────────────────────
+# These tests MUST PASS on unfixed code. They encode correct baseline behavior
+# for inputs that do NOT trigger the bugs.
+
+
+def test_apply_scan_results_permanent_uninstall_removes_app():
+    """Preservation: after 5 consecutive empty scans, an app is absent from state.
+
+    On unfixed code the app is removed on the very first empty scan, so after
+    5 scans the app is certainly absent. On fixed code (with a grace period of
+    N absences) the app is also absent after 5 consecutive absences as long as
+    N <= 5. This assertion holds on both unfixed and fixed code.
+    MUST PASS on unfixed code.
+    """
+    state = make_state()
+    app = Application(id="perm-123", sort_id=0, name="OldApp", exec="old.desktop")
+    state.apps["perm-123"] = app
+
+    for _ in range(5):
+        state.apply_scan_results([])
+
+    assert "perm-123" not in state.apps, (
+        "App should be absent after 5 consecutive empty scans."
+    )
+
+
+def test_reorder_non_full_page_inserts_within_slot_range():
+    """Preservation: dragging to a page with fewer than page_size items keeps
+    all sort_ids within that page's slot range [base, base + page_size - 1].
+
+    Uses page 1 (base=24) with 3 items and drags an item from page 0 to it.
+    On unfixed code this is a non-buggy path (len(page_ids)=3 < page_size=24,
+    so the capacity guard does not apply). MUST PASS on unfixed code.
+    """
+    # Page 0: a0(0)
+    # Page 1: b0(24), b1(25), b2(26)
+    apps = {
+        "a0": _app("a0", 0),
+        "b0": _app("b0", PAGE_SIZE),
+        "b1": _app("b1", PAGE_SIZE + 1),
+        "b2": _app("b2", PAGE_SIZE + 2),
+    }
+    state = make_state(apps=apps)
+
+    # Drag a0 (page 0) onto b1 (page 1) — page 1 has 3 items, well under 24
+    state.reorder("a0", "b1", "before", False, None)
+
+    base = PAGE_SIZE
+    for app in state.apps.values():
+        if app.folder_id is None and app.sort_id // PAGE_SIZE == 1:
+            assert base <= app.sort_id <= base + PAGE_SIZE - 1, (
+                f"App {app.id} sort_id {app.sort_id} outside page 1 slot range "
+                f"[{base}, {base + PAGE_SIZE - 1}]."
+            )
+
+
+def test_apply_scan_results_new_app_appended_at_max_sort_plus_one():
+    """Preservation: a newly discovered app gets sort_id = max_existing_sort_id + 1.
+
+    apply_scan_results computes max_sort = max over all existing app and folder
+    sort_ids, then assigns max_sort + 1 to each new app in sequence.
+    MUST PASS on unfixed code.
+    """
+    state = make_state(apps={
+        "a1": _app("a1", 5),
+        "a2": _app("a2", 10),
+    })
+    # found contains both existing apps plus one new one
+    found = [
+        {"name": "a1", "exec": "a1.desktop", "icon": None, "icon_name": None},
+        {"name": "a2", "exec": "a2.desktop", "icon": None, "icon_name": None},
+        {"name": "NewApp", "exec": "newapp.desktop", "icon": None, "icon_name": None},
+    ]
+    state.apply_scan_results(found)
+
+    new_app = next(
+        (a for a in state.apps.values() if a.name == "NewApp"), None
+    )
+    assert new_app is not None, "NewApp should have been added by apply_scan_results"
+    assert new_app.sort_id == 11, (
+        f"Expected new app sort_id 11 (max_existing=10, +1), got {new_app.sort_id}."
+    )
+
+
+# Small concrete initial app configurations for property-based tests
+_INITIAL_APP_CONFIGS = [
+    {"id": "app-a", "sort_id": 0, "name": "Alpha", "exec": "alpha.desktop"},
+    {"id": "app-b", "sort_id": 5, "name": "Beta", "exec": "beta.desktop"},
+    {"id": "app-c", "sort_id": 10, "name": "Gamma", "exec": "gamma.desktop"},
+]
+
+
+@settings(max_examples=len(_INITIAL_APP_CONFIGS))
+@given(st.sampled_from(_INITIAL_APP_CONFIGS))
+def test_pbt_permanent_uninstall_after_5_absences(app_cfg):
+    """Property: for any initial app, 5 consecutive empty scans remove the app.
+
+    Unfixed code removes on the first scan; fixed code removes after N <= 5.
+    Either way the app is absent after 5 consecutive absences.
+    MUST PASS on unfixed code.
+    """
+    state = make_state()
+    app = Application(
+        id=app_cfg["id"],
+        sort_id=app_cfg["sort_id"],
+        name=app_cfg["name"],
+        exec=app_cfg["exec"],
+    )
+    state.apps[app_cfg["id"]] = app
+
+    for _ in range(5):
+        state.apply_scan_results([])
+
+    assert app_cfg["id"] not in state.apps, (
+        f"App {app_cfg['id']} should be absent after 5 consecutive empty scans."
+    )
+
+
+@settings(max_examples=20)
+@given(st.integers(min_value=1, max_value=20))
+def test_pbt_non_full_page_drag_stays_in_slot_range(item_count):
+    """Property: dragging to a page with fewer than page_size items keeps
+    all resulting sort_ids within that page's slot range.
+
+    For any target page with 1-20 items (all < PAGE_SIZE=24), a cross-page
+    drag must succeed and all items on the target page must have sort_ids
+    in [base, base + page_size - 1]. MUST PASS on unfixed code.
+    """
+    # Build page 1 (target) with item_count items and page 0 with 1 item to drag
+    apps = {"drag-src": _app("drag-src", 0)}  # page 0, slot 0
+    for i in range(item_count):
+        uid = f"tgt-{i:02d}"
+        apps[uid] = _app(uid, PAGE_SIZE + i)  # page 1, slots 24..23+item_count
+    state = make_state(apps=apps)
+
+    # Drag the page-0 item onto the first item of page 1
+    target_id = "tgt-00"
+    state.reorder("drag-src", target_id, "before", False, None)
+
+    base = PAGE_SIZE
+    for app in state.apps.values():
+        if app.folder_id is None and app.sort_id // PAGE_SIZE == 1:
+            assert base <= app.sort_id <= base + PAGE_SIZE - 1, (
+                f"App {app.id} sort_id {app.sort_id} outside page 1 slot range "
+                f"[{base}, {base + PAGE_SIZE - 1}] after dragging into {item_count}-item page."
+            )
