@@ -28,6 +28,7 @@ dev = [
     "pytest>=7.0",
     "pytest-qt",
     "pytest-cov",
+    "hypothesis>=6.0",
     "ruff",
     "black",
     "build",

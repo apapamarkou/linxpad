@@ -27,6 +27,7 @@ twine              # upload to PyPI
 pytest>=7.0
 pytest-qt          # Qt widget testing helpers (headless via offscreen platform)
 pytest-cov         # coverage reports
+hypothesis>=6.0    # property-based testing
 
 # ── Linting / formatting ──────────────────────────────────────────────────────
 ruff               # fast linter (configured in pyproject.toml)
