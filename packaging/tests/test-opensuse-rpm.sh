@@ -18,10 +18,11 @@ RPM_NAME="$(basename "$RPM_FILE")"
 echo "→ Testing $RPM_NAME on openSUSE $SUSE_VER"
 
 docker run --rm \
+    --stop-timeout 120 \
     -v "$RPM_FILE:/tmp/$RPM_NAME:ro" \
     "$IMAGE" \
     bash -euo pipefail -c "
-        zypper --no-gpg-checks install -y /tmp/$RPM_NAME 2>&1 | tail -5
+        zypper --no-gpg-checks --no-refresh install -y /tmp/$RPM_NAME 2>&1 | tail -5
         echo '→ Verifying installation'
         rpm -q linxpad
         python3 -c 'import linxpad.core; print(\"linxpad core import OK\")'
