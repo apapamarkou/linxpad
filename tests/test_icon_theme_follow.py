@@ -24,6 +24,7 @@ from linxpad.services.icons import IconResolver, detect_icon_theme
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _make_icon_tree(base: str, entries: list[tuple[str, ...]]) -> None:
     """Create empty SVG stub files at the given sub-paths under *base*."""
     for parts in entries:
@@ -75,10 +76,13 @@ def test_pbt_bug_condition_user_theme_beats_breeze(icon_name: str) -> None:
     expected outcome for Task 1 — it confirms the bug exists.
     """
     with tempfile.TemporaryDirectory() as tmp:
-        _make_icon_tree(tmp, [
-            ("papirus", "apps", "48x48", f"{icon_name}.svg"),
-            ("breeze",  "apps", "48x48", f"{icon_name}.svg"),
-        ])
+        _make_icon_tree(
+            tmp,
+            [
+                ("papirus", "apps", "48x48", f"{icon_name}.svg"),
+                ("breeze", "apps", "48x48", f"{icon_name}.svg"),
+            ],
+        )
 
         original_paths = icons_module._SEARCH_PATHS
         icons_module._SEARCH_PATHS = [tmp]
@@ -89,9 +93,9 @@ def test_pbt_bug_condition_user_theme_beats_breeze(icon_name: str) -> None:
         finally:
             icons_module._SEARCH_PATHS = original_paths
 
-        assert result is not None, (
-            f"resolve({icon_name!r}) returned None — expected a papirus path."
-        )
+        assert (
+            result is not None
+        ), f"resolve({icon_name!r}) returned None — expected a papirus path."
         assert "/papirus/" in result, (
             f"resolve({icon_name!r}) returned {result!r}; "
             "expected a path under /papirus/ but got a path from a different theme. "
@@ -112,16 +116,20 @@ def test_pbt_bug_condition_user_theme_beats_breeze(icon_name: str) -> None:
 # Validates: Requirements 3.4, 3.5
 # ---------------------------------------------------------------------------
 
+
 def test_pbt_preservation_breeze_beats_hicolor() -> None:
     """Preservation: when both breeze and hicolor have the same-size icon, breeze wins.
 
     Validates: Requirements 3.4, 3.5
     """
     with tempfile.TemporaryDirectory() as tmp:
-        _make_icon_tree(tmp, [
-            ("breeze", "apps", "48x48", "folder.svg"),
-            ("hicolor", "apps", "48x48", "folder.svg"),
-        ])
+        _make_icon_tree(
+            tmp,
+            [
+                ("breeze", "apps", "48x48", "folder.svg"),
+                ("hicolor", "apps", "48x48", "folder.svg"),
+            ],
+        )
 
         original_paths = icons_module._SEARCH_PATHS
         icons_module._SEARCH_PATHS = [tmp]
@@ -144,6 +152,7 @@ def test_pbt_preservation_breeze_beats_hicolor() -> None:
 # Validates: Requirements 3.6
 # ---------------------------------------------------------------------------
 
+
 def test_pbt_preservation_cache_hit() -> None:
     """Preservation: second resolve() for the same name is served from cache.
 
@@ -153,9 +162,12 @@ def test_pbt_preservation_cache_hit() -> None:
     resolve() populates the cache; the second must not trigger another walk.
     """
     with tempfile.TemporaryDirectory() as tmp:
-        _make_icon_tree(tmp, [
-            ("breeze", "apps", "48x48", "terminal.svg"),
-        ])
+        _make_icon_tree(
+            tmp,
+            [
+                ("breeze", "apps", "48x48", "terminal.svg"),
+            ],
+        )
 
         walk_call_count = []
         original_walk = os.walk
@@ -176,9 +188,9 @@ def test_pbt_preservation_cache_hit() -> None:
         finally:
             icons_module._SEARCH_PATHS = original_paths
 
-        assert result1 == result2, (
-            f"First resolve returned {result1!r}, second returned {result2!r} — cache must return same value."
-        )
+        assert (
+            result1 == result2
+        ), f"First resolve returned {result1!r}, second returned {result2!r} — cache must return same value."
         assert calls_after_first > 0, "os.walk was never called — first resolve should have walked."
         assert calls_after_second == calls_after_first, (
             f"os.walk was called {calls_after_second - calls_after_first} extra time(s) on the second "
@@ -191,6 +203,7 @@ def test_pbt_preservation_cache_hit() -> None:
 #
 # Validates: Requirements 3.3
 # ---------------------------------------------------------------------------
+
 
 @settings(max_examples=30)
 @given(icon_name=_icon_name_strategy)
@@ -221,6 +234,7 @@ def test_pbt_preservation_unknown_icon_returns_none(icon_name: str) -> None:
 #
 # Validates: Requirements 3.1, 3.2
 # ---------------------------------------------------------------------------
+
 
 def test_pbt_preservation_absolute_path_returned_as_is() -> None:
     """Preservation: an existing absolute path is returned unchanged.
@@ -260,6 +274,7 @@ def test_pbt_preservation_absolute_path_returned_as_is() -> None:
 # and flips to a real PASS once the fix is applied.
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.xfail(
     reason="detected_theme param not yet implemented in IconResolver.__init__",
     strict=False,
@@ -276,9 +291,12 @@ def test_pbt_preservation_detected_theme_none_matches_no_arg(icon_name: str) -> 
     accidentally changing behavior when no theme is detected.
     """
     with tempfile.TemporaryDirectory() as tmp:
-        _make_icon_tree(tmp, [
-            ("breeze", "apps", "48x48", f"{icon_name}.svg"),
-        ])
+        _make_icon_tree(
+            tmp,
+            [
+                ("breeze", "apps", "48x48", f"{icon_name}.svg"),
+            ],
+        )
 
         original_paths = icons_module._SEARCH_PATHS
         icons_module._SEARCH_PATHS = [tmp]

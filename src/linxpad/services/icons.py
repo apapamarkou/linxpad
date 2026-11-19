@@ -62,9 +62,7 @@ def detect_icon_theme(
     if os.path.isfile(xfce_path):
         try:
             tree = ET.parse(xfce_path)
-            node = tree.getroot().find(
-                "./property[@name='Net']/property[@name='IconThemeName']"
-            )
+            node = tree.getroot().find("./property[@name='Net']/property[@name='IconThemeName']")
             if node is not None and "value" in node.attrib:
                 return node.attrib["value"].strip()
         except ET.ParseError:
@@ -73,9 +71,7 @@ def detect_icon_theme(
             pass
 
     # 3. LXDE/LXQt
-    lx_glob = _lxsession_glob or os.path.expanduser(
-        "~/.config/lxsession/*/desktop.conf"
-    )
+    lx_glob = _lxsession_glob or os.path.expanduser("~/.config/lxsession/*/desktop.conf")
     for conf_path in sorted(glob.glob(lx_glob)):
         try:
             cfg = configparser.ConfigParser(strict=False)
