@@ -26,7 +26,7 @@ Bugs addressed: stale cached icon path (1.1), SVG without Qt plugin (1.2), trans
 
 _Write these tests BEFORE implementing any fix. Each test MUST FAIL on unfixed code — failure confirms the bug exists. Do NOT fix the test or the code when it fails._
 
-- [ ] 1. Write bug condition exploration test: stale path & SVG null pixmap (Bugs 1.1 & 1.2)
+- [x] 1. Write bug condition exploration test: stale path & SVG null pixmap (Bugs 1.1 & 1.2)
   - **Property 1: Bug Condition** - Non-Null Pixmap Fallback for Stale and SVG Paths
   - **CRITICAL**: This test MUST FAIL on unfixed code — failure confirms the bug exists
   - **DO NOT attempt to fix the test or the code when it fails**
@@ -43,7 +43,7 @@ _Write these tests BEFORE implementing any fix. Each test MUST FAIL on unfixed c
   - _Bug_Condition: isBugCondition_stale_path(item, icon_resolver) OR isBugCondition_svg_null(item, icon_resolver) from design_
   - _Requirements: 2.1, 2.2, 2.3, 2.4_
 
-- [ ] 2. Write bug condition exploration test: transient .desktop absence (Bug 1.3)
+- [x] 2. Write bug condition exploration test: transient .desktop absence (Bug 1.3)
   - **Property 1: Bug Condition** - Grace Period Retention for Transient .desktop Absence
   - **CRITICAL**: This test MUST FAIL on unfixed code — failure confirms the bug exists
   - **DO NOT attempt to fix the test or the code when it fails**
@@ -60,7 +60,7 @@ _Write these tests BEFORE implementing any fix. Each test MUST FAIL on unfixed c
   - _Bug_Condition: isBugCondition_transient_absence(state, found) from design_
   - _Requirements: 2.5, 2.7_
 
-- [ ] 3. Write bug condition exploration test: full-page drag overflow (Bug 1.4)
+- [x] 3. Write bug condition exploration test: full-page drag overflow (Bug 1.4)
   - **Property 1: Bug Condition** - Block Drag to Full Page
   - **CRITICAL**: This test MUST FAIL on unfixed code — failure confirms the bug exists
   - **DO NOT attempt to fix the test or the code when it fails**
@@ -76,7 +76,7 @@ _Write these tests BEFORE implementing any fix. Each test MUST FAIL on unfixed c
   - _Bug_Condition: isBugCondition_full_page_drag(state, dragged_id, target_id) from design_
   - _Requirements: 2.8_
 
-- [ ] 4. Write bug condition exploration test: icon size misparse (Bug 1.5)
+- [x] 4. Write bug condition exploration test: icon size misparse (Bug 1.5)
   - **Property 1: Bug Condition** - Correct NxN Size Parsing
   - **CRITICAL**: This test MUST FAIL on unfixed code — failure confirms the bug exists
   - **DO NOT attempt to fix the test or the code when it fails**

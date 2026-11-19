@@ -1,3 +1,11 @@
+# Failure output on unfixed code:
+# FAILED tests/test_launcher_state.py::test_c3_transient_absence
+#   AssertionError: App should survive first empty scan (transient absence).
+#   Bug 1.3: app deleted immediately on first empty scan. 'abc-123' in {} is False.
+# FAILED tests/test_launcher_state.py::test_c4_full_page_drag_overflow
+#   AssertionError: Dragged item x50 sort_id should remain 48 (page 0 is full), got 5.
+#   Bug 1.4: reorder allowed overflow onto full page (len(page_ids) > page_size misses == case).
+
 from linxpad.core.launcher_state import PAGE_SIZE, LauncherState
 from linxpad.models import Application, Folder
 from linxpad.services import DesktopScanner, IconResolver
@@ -186,3 +194,56 @@ def test_remove_from_folder_dissolves_with_stale_remaining_id_unrepaired():
     assert deleted == "f1"
     assert "f1" not in state.folders
     assert state.apps["a1"].folder_id is None
+
+
+def test_c3_transient_absence():
+    """Bug 1.3: apply_scan_results([]) deletes apps immediately.
+    MUST FAIL on unfixed code: app is removed after a single empty scan.
+    """
+    state = make_state()
+    app = Application(id="abc-123", sort_id=5, name="Firefox", exec="firefox.desktop")
+    state.apps["abc-123"] = app
+
+    state.apply_scan_results([])
+    assert "abc-123" in state.apps, (
+        "App should survive first empty scan (transient absence). "
+        "Bug 1.3: app deleted immediately on first empty scan."
+    )
+
+    state.apply_scan_results([])
+    assert "abc-123" in state.apps, (
+        "App should survive second empty scan. "
+        "Bug 1.3: app still not present after second scan."
+    )
+
+
+def test_c4_full_page_drag_overflow():
+    """Bug 1.4: reorder allows dragging onto a full page because len(page_ids) > page_size
+    misses the == case.
+    MUST FAIL on unfixed code: dragged item ends up with sort_id on the full page.
+    """
+    state = make_state()
+    # Create PAGE_SIZE apps on page 0, sort_ids 0..23
+    apps_on_page0 = []
+    for i in range(PAGE_SIZE):
+        uid = f"app-p0-{i:02d}"
+        app = Application(id=uid, sort_id=i, name=f"App{i}", exec=f"app{i}.desktop")
+        state.apps[uid] = app
+        apps_on_page0.append(uid)
+    # One app on page 2, sort_id=48
+    state.apps["x50"] = Application(id="x50", sort_id=48, name="X50", exec="x50.desktop")
+
+    # Drag x50 onto page 0 (target = app at sort_id 5)
+    state.reorder("x50", "app-p0-05", "before", False, None)
+
+    dragged = state.apps["x50"]
+    assert dragged.sort_id == 48, (
+        f"Dragged item x50 sort_id should remain 48 (page 0 is full), got {dragged.sort_id}. "
+        "Bug 1.4: reorder allowed overflow onto full page."
+    )
+    for uid in apps_on_page0:
+        a = state.apps[uid]
+        assert a.sort_id <= 23, (
+            f"App {uid} sort_id {a.sort_id} overflowed page 0 boundary. "
+            "Bug 1.4."
+        )
