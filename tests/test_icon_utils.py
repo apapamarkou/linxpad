@@ -81,9 +81,7 @@ def test_app_pixmap_valid_png_path_returns_non_null():
     assert os.path.exists(png_path), f"Test PNG not found at {png_path}"
     item = {"icon": png_path, "icon_name": None, "name": "LinxPad"}
     result = app_pixmap(item, 48)
-    assert not result.isNull(), (
-        f"Expected non-null pixmap for existing PNG {png_path}, got null."
-    )
+    assert not result.isNull(), f"Expected non-null pixmap for existing PNG {png_path}, got null."
 
 
 def test_app_pixmap_theme_icon_name_returns_non_null():
@@ -108,9 +106,9 @@ def test_app_pixmap_no_icon_path_no_name_returns_letter_avatar():
     """
     item = {"icon": None, "icon_name": None, "name": "Firefox"}
     result = app_pixmap(item, 48)
-    assert not result.isNull(), (
-        "Expected non-null letter-avatar pixmap for item with no icon, got null."
-    )
+    assert (
+        not result.isNull()
+    ), "Expected non-null letter-avatar pixmap for item with no icon, got null."
 
 
 def test_app_pixmap_empty_name_returns_question_mark_avatar():
@@ -121,9 +119,9 @@ def test_app_pixmap_empty_name_returns_question_mark_avatar():
     """
     item = {"icon": None, "icon_name": None, "name": ""}
     result = app_pixmap(item, 48)
-    assert not result.isNull(), (
-        "Expected non-null '?' letter-avatar pixmap for empty-name item, got null."
-    )
+    assert (
+        not result.isNull()
+    ), "Expected non-null '?' letter-avatar pixmap for empty-name item, got null."
 
 
 # Small concrete set of items that do NOT trigger the bug conditions:
@@ -148,6 +146,4 @@ def test_app_pixmap_pbt_non_buggy_items_return_non_null(item):
     MUST PASS on unfixed code.
     """
     result = app_pixmap(item, 48)
-    assert not result.isNull(), (
-        f"Expected non-null pixmap for non-buggy item {item}, got null."
-    )
+    assert not result.isNull(), f"Expected non-null pixmap for non-buggy item {item}, got null."

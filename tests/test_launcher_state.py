@@ -61,7 +61,7 @@ def test_apply_scan_removes_missing_apps():
     assert "x1" in state.apps
     assert not state.apply_scan_results([])  # count=2, within grace — no change
     assert "x1" in state.apps
-    assert state.apply_scan_results([])      # count=3, grace exhausted — removed
+    assert state.apply_scan_results([])  # count=3, grace exhausted — removed
     assert "x1" not in state.apps
 
 
@@ -220,8 +220,7 @@ def test_c3_transient_absence():
 
     state.apply_scan_results([])
     assert "abc-123" in state.apps, (
-        "App should survive second empty scan. "
-        "Bug 1.3: app still not present after second scan."
+        "App should survive second empty scan. " "Bug 1.3: app still not present after second scan."
     )
 
 
@@ -252,8 +251,7 @@ def test_c4_full_page_drag_overflow():
     for uid in apps_on_page0:
         a = state.apps[uid]
         assert a.sort_id <= 23, (
-            f"App {uid} sort_id {a.sort_id} overflowed page 0 boundary. "
-            "Bug 1.4."
+            f"App {uid} sort_id {a.sort_id} overflowed page 0 boundary. " "Bug 1.4."
         )
 
 
@@ -278,9 +276,7 @@ def test_apply_scan_results_permanent_uninstall_removes_app():
     for _ in range(5):
         state.apply_scan_results([])
 
-    assert "perm-123" not in state.apps, (
-        "App should be absent after 5 consecutive empty scans."
-    )
+    assert "perm-123" not in state.apps, "App should be absent after 5 consecutive empty scans."
 
 
 def test_reorder_non_full_page_inserts_within_slot_range():
@@ -320,10 +316,12 @@ def test_apply_scan_results_new_app_appended_at_max_sort_plus_one():
     sort_ids, then assigns max_sort + 1 to each new app in sequence.
     MUST PASS on unfixed code.
     """
-    state = make_state(apps={
-        "a1": _app("a1", 5),
-        "a2": _app("a2", 10),
-    })
+    state = make_state(
+        apps={
+            "a1": _app("a1", 5),
+            "a2": _app("a2", 10),
+        }
+    )
     # found contains both existing apps plus one new one
     found = [
         {"name": "a1", "exec": "a1.desktop", "icon": None, "icon_name": None},
@@ -332,13 +330,11 @@ def test_apply_scan_results_new_app_appended_at_max_sort_plus_one():
     ]
     state.apply_scan_results(found)
 
-    new_app = next(
-        (a for a in state.apps.values() if a.name == "NewApp"), None
-    )
+    new_app = next((a for a in state.apps.values() if a.name == "NewApp"), None)
     assert new_app is not None, "NewApp should have been added by apply_scan_results"
-    assert new_app.sort_id == 11, (
-        f"Expected new app sort_id 11 (max_existing=10, +1), got {new_app.sort_id}."
-    )
+    assert (
+        new_app.sort_id == 11
+    ), f"Expected new app sort_id 11 (max_existing=10, +1), got {new_app.sort_id}."
 
 
 # Small concrete initial app configurations for property-based tests
@@ -370,9 +366,9 @@ def test_pbt_permanent_uninstall_after_5_absences(app_cfg):
     for _ in range(5):
         state.apply_scan_results([])
 
-    assert app_cfg["id"] not in state.apps, (
-        f"App {app_cfg['id']} should be absent after 5 consecutive empty scans."
-    )
+    assert (
+        app_cfg["id"] not in state.apps
+    ), f"App {app_cfg['id']} should be absent after 5 consecutive empty scans."
 
 
 @settings(max_examples=20)

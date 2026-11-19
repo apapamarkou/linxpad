@@ -8,7 +8,6 @@
 #   This companion test also FAILS on unfixed code — the bug is broader than expected:
 #   not only does '2x-retina' misparse, it also shadows any valid NxN component later in the path.
 
-import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
@@ -59,9 +58,7 @@ def test_parse_size_scalable_returns_9999():
     and unaffected by the NxN misparse bug. MUST PASS on unfixed code.
     """
     result = IconResolver._parse_size("/usr/share/icons/Adwaita/scalable/apps/firefox.svg")
-    assert result == 9999, (
-        f"Expected 9999 for scalable path, got {result}."
-    )
+    assert result == 9999, f"Expected 9999 for scalable path, got {result}."
 
 
 def test_parse_size_scalable_takes_precedence_over_nxn():
@@ -71,12 +68,10 @@ def test_parse_size_scalable_takes_precedence_over_nxn():
     containing both 'scalable' and '48x48' returns 9999 not 48.
     MUST PASS on unfixed code.
     """
-    result = IconResolver._parse_size(
-        "/usr/share/icons/Adwaita/scalable/48x48/apps/firefox.svg"
-    )
-    assert result == 9999, (
-        f"Expected 9999 for scalable/48x48 path (scalable takes precedence), got {result}."
-    )
+    result = IconResolver._parse_size("/usr/share/icons/Adwaita/scalable/48x48/apps/firefox.svg")
+    assert (
+        result == 9999
+    ), f"Expected 9999 for scalable/48x48 path (scalable takes precedence), got {result}."
 
 
 def test_parse_size_valid_nxn_returns_n():
@@ -88,9 +83,7 @@ def test_parse_size_valid_nxn_returns_n():
     MUST PASS on unfixed code.
     """
     result = IconResolver._parse_size("/usr/share/icons/Adwaita/48x48/apps/firefox.png")
-    assert result == 48, (
-        f"Expected 48 for clean 48x48 path, got {result}."
-    )
+    assert result == 48, f"Expected 48 for clean 48x48 path, got {result}."
 
 
 def test_parse_size_16x16_returns_16():
@@ -100,9 +93,7 @@ def test_parse_size_16x16_returns_16():
     no earlier path component contains 'x'. MUST PASS on unfixed code.
     """
     result = IconResolver._parse_size("/usr/share/icons/Adwaita/16x16/apps/something.png")
-    assert result == 16, (
-        f"Expected 16 for 16x16 path, got {result}."
-    )
+    assert result == 16, f"Expected 16 for 16x16 path, got {result}."
 
 
 def test_parse_size_pure_digit_returns_value():
@@ -112,9 +103,7 @@ def test_parse_size_pure_digit_returns_value():
     Observed on unfixed code: returns 48 for '.../48/apps/...'. MUST PASS on unfixed code.
     """
     result = IconResolver._parse_size("/usr/share/icons/Adwaita/48/apps/something.png")
-    assert result == 48, (
-        f"Expected 48 for pure-digit path component '48', got {result}."
-    )
+    assert result == 48, f"Expected 48 for pure-digit path component '48', got {result}."
 
 
 # Small concrete set of paths covering both scalable and clean NxN cases.
@@ -142,9 +131,7 @@ def test_pbt_parse_size_scalable_and_clean_nxn(path_expected):
     """
     path, expected = path_expected
     result = IconResolver._parse_size(path)
-    assert result == expected, (
-        f"_parse_size({path!r}): expected {expected}, got {result}."
-    )
+    assert result == expected, f"_parse_size({path!r}): expected {expected}, got {result}."
 
 
 # ── Task 12: Cache re-validation tests ───────────────────────────────────────
@@ -157,8 +144,6 @@ def test_resolve_stale_cached_path_evicts_and_resolves():
     detect the stale entry, call _find() to get a fresh result, update the cache,
     and return the new path.
     """
-    import tempfile
-    import os
 
     resolver = IconResolver()
     new_path = "/some/valid/replacement/firefox.png"
@@ -172,12 +157,10 @@ def test_resolve_stale_cached_path_evicts_and_resolves():
     ) as mock_find:
         result = resolver.resolve("firefox")
 
-    assert result == new_path, (
-        f"Expected re-resolved path {new_path!r}, got {result!r}."
-    )
-    assert resolver._cache["firefox"] == new_path, (
-        f"Cache should be updated to {new_path!r}, got {resolver._cache['firefox']!r}."
-    )
+    assert result == new_path, f"Expected re-resolved path {new_path!r}, got {result!r}."
+    assert (
+        resolver._cache["firefox"] == new_path
+    ), f"Cache should be updated to {new_path!r}, got {resolver._cache['firefox']!r}."
     mock_find.assert_called_once_with("firefox")
 
 
@@ -187,8 +170,8 @@ def test_resolve_valid_cached_path_returns_cached():
     Prime the cache with a path that exists on disk. resolve() should return the
     cached value immediately without re-resolving.
     """
-    import tempfile
     import os
+    import tempfile
     from unittest.mock import patch
 
     resolver = IconResolver()
@@ -203,9 +186,7 @@ def test_resolve_valid_cached_path_returns_cached():
         with patch.object(resolver, "_find") as mock_find:
             result = resolver.resolve("myapp")
 
-        assert result == existing_path, (
-            f"Expected cached path {existing_path!r}, got {result!r}."
-        )
+        assert result == existing_path, f"Expected cached path {existing_path!r}, got {result!r}."
         mock_find.assert_not_called()
     finally:
         os.unlink(existing_path)
