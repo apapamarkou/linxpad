@@ -23,7 +23,7 @@ set -euo pipefail
 if command -v dnf &>/dev/null; then
     dnf install -y python3-pip python3-pyqt6 python3-watchdog 2>/dev/null | tail -3
 elif command -v zypper &>/dev/null; then
-    zypper install -y python3-pip python3-qt6 python3-watchdog 2>/dev/null | tail -3
+    zypper --no-refresh install -y python3-pip python3-qt6 python3-watchdog 2>/dev/null | tail -3
 elif command -v apt-get &>/dev/null; then
     export DEBIAN_FRONTEND=noninteractive
     apt-get update -qq
