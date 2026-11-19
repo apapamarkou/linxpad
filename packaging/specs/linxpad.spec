@@ -1,5 +1,5 @@
 Name:           linxpad
-Version:        1.3.0
+Version:        1.4.0
 Release:        1%{?dist}
 Summary:        A macOS-style fullscreen application launcher for Linux
 
