@@ -19,6 +19,8 @@ fi
 
 DEB_NAME="$(basename "$DEB_FILE")"
 echo "→ Testing $DEB_NAME on $LABEL"
+echo "→ Pulling Docker image: $IMAGE"
+docker pull "$IMAGE"
 
 docker run --rm \
     -v "$DEB_FILE:/tmp/$DEB_NAME:ro" \

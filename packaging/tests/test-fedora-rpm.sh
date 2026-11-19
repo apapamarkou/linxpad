@@ -11,6 +11,8 @@ command -v docker >/dev/null 2>&1 || { echo "⚠ docker not found — skipping";
 
 RPM_NAME="$(basename "$RPM_FILE")"
 echo "→ Testing $RPM_NAME on Fedora $FEDORA_VER"
+echo "→ Pulling Docker image: fedora:$FEDORA_VER"
+docker pull "fedora:$FEDORA_VER"
 
 docker run --rm \
     -v "$RPM_FILE:/tmp/$RPM_NAME:ro" \

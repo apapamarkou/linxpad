@@ -10,6 +10,8 @@ command -v docker >/dev/null 2>&1 || { echo "⚠ docker not found — skipping";
 
 PKG_NAME="$(basename "$PKG_FILE")"
 echo "→ Testing $PKG_NAME on Arch Linux"
+echo "→ Pulling Docker image: archlinux:latest"
+docker pull archlinux:latest
 
 docker run --rm \
     -v "$PKG_FILE:/tmp/$PKG_NAME:ro" \

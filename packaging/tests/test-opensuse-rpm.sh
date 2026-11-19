@@ -16,6 +16,8 @@ esac
 
 RPM_NAME="$(basename "$RPM_FILE")"
 echo "→ Testing $RPM_NAME on openSUSE $SUSE_VER"
+echo "→ Pulling Docker image: $IMAGE"
+docker pull "$IMAGE"
 
 docker run --rm \
     --stop-timeout 120 \

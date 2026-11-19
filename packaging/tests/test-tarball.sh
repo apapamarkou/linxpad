@@ -12,6 +12,8 @@ command -v docker >/dev/null 2>&1 || { echo "⚠ docker not found — skipping";
 
 TARBALL_NAME="$(basename "$TARBALL")"
 echo "→ Testing $TARBALL_NAME installer on $LABEL"
+echo "→ Pulling Docker image: $IMAGE"
+docker pull "$IMAGE"
 
 # Write inner script to a temp file to avoid heredoc escaping issues
 INNER="$(mktemp)"
