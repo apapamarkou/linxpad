@@ -17,7 +17,7 @@ docker run --rm \
     -v "$PKG_FILE:/tmp/$PKG_NAME:ro" \
     archlinux:latest \
     bash -euo pipefail -c "
-        pacman -Sy --noconfirm 2>&1 | tail -3
+        pacman -Syu --noconfirm 2>&1 | tail -3
         # Install with --noconfirm and ignore dependency checks for test
         pacman -U --noconfirm --nodeps /tmp/$PKG_NAME 2>&1 | tail -5
         echo '→ Verifying installation'

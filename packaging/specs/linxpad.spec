@@ -54,6 +54,15 @@ gtk-update-icon-cache -f -t %{_datadir}/icons/hicolor &>/dev/null || :
 %{_datadir}/applications/linxpad.desktop
 
 %changelog
+* Thu Nov 19 2026 Andrianos Papamarkou <andrianos@example.com> - 1.4.0
+- Fixed stale cached icon path returning null pixmap instead of letter-avatar fallback
+- Fixed SVG icons without Qt SVG plugin causing blank icon slots
+- Fixed transient .desktop file absence immediately removing app from grid
+- Fixed drag-and-drop to a full page overflowing sort positions into the next page
+- Fixed icon size parser misreading retina-style directory names
+- IconResolver now evicts stale cache entries and re-resolves after reinstalling a package
+- Install script: added --global and non-interactive mode flags
+
 * Wed Jan 01 2025 Andrianos Papamarkou <andrianos@example.com> - 1.3.0
 - New application icon and alternative glow icon
 - Removed linxpad-folder.png icon — folder icons now show a live preview collage of their contents

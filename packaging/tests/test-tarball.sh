@@ -31,7 +31,7 @@ elif command -v apt-get &>/dev/null; then
     apt-get update -qq
     apt-get install -y python3-pip python3-pyqt6 python3-watchdog 2>/dev/null | tail -3
 elif command -v pacman &>/dev/null; then
-    pacman -Sy --noconfirm python-pip python-pyqt6 python-watchdog 2>/dev/null | tail -3
+    pacman -Syu --noconfirm python-pip python-pyqt6 python-watchdog 2>/dev/null | tail -3
 fi
 
 # Extract tarball
