@@ -1,5 +1,21 @@
 linxpad (1.4.0) unstable; urgency=medium
 
+  * Fixed stale cached icon path returning null pixmap instead of letter-avatar fallback.
+  * Fixed SVG icons without Qt SVG plugin causing blank icon slots.
+  * Fixed transient .desktop file absence immediately removing app from grid; app now
+    survives up to 3 consecutive missed scans before being removed.
+  * Fixed drag-and-drop to a full page (exactly page_size items) overflowing sort
+    positions into the next page's slot range.
+  * Fixed icon size parser misreading retina-style directory names (e.g. 2x-retina)
+    as a valid NxN size, causing the wrong icon resolution to be selected.
+  * IconResolver now evicts stale cache entries and re-resolves, so a replacement
+    theme icon is found after reinstalling a package.
+  * Install script: added --global and non-interactive mode flags.
+
+ -- Andrianos Papamarkou <papamarkoua@gmail.com>  Thu, 19 Nov 2026 00:00:00 +0000
+
+linxpad (1.3.0) unstable; urgency=medium
+
   * New application icon (linxpad.png) and alternative glow icon (linxpad-glow.png).
   * Removed linxpad-folder.png icon — folder icons now show a live preview collage of their contents.
   * AppImage fixes: resolved startup failure on Debian and Ubuntu.
@@ -9,10 +25,10 @@ linxpad (1.4.0) unstable; urgency=medium
   * Removed Flatpak packaging support.
   * Minor bug fixes and stability improvements.
 
- -- Andrianos Papamarkou <andrianos@example.com>  Wed, 01 Jan 2025 00:00:00 +0000
+ -- Andrianos Papamarkou <papamarkoua@gmail.com>  Wed, 01 Jan 2025 00:00:00 +0000
 
 linxpad (1.1.0) unstable; urgency=medium
 
   * Bug fix Debian package release.
 
- -- Andrianos Papamarkou <andrianos@example.com>  Wed, 01 Jan 2025 00:00:00 +0000
+ -- Andrianos Papamarkou <papamarkoua@gmail.com>  Wed, 01 Jan 2025 00:00:00 +0000

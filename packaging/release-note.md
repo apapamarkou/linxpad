@@ -1,23 +1,18 @@
-## What's new in v1.3.0
+## What's new in v1.4.0
 
-### New icons
-- Replaced the application icon with a new `linxpad.png`
-- Added `linxpad-glow.png` as an alternative icon for manual use (e.g. custom dock launchers)
-- Removed `linxpad-folder.png` — folder icons now show a live preview collage of their contents
+### Bug fixes
 
-### Fixes
-- Fixed AppImage not starting on Debian-based systems
-- Fixed AppImage startup failure on Ubuntu
+- **Icon disappearance: stale cached path** — icons no longer go blank when a cached icon path is deleted from disk (e.g. after a package reinstall). The fallback chain now shows the app's letter-avatar instead of an empty slot.
+- **Icon disappearance: SVG without Qt plugin** — apps with SVG icons no longer show blank slots on systems where the Qt SVG plugin is unavailable. The letter-avatar fallback is used instead.
+- **Icon disappearance: transient .desktop absence** — apps no longer vanish from the grid during a brief scan miss (e.g. a slow filesystem or mid-update state). An app must be absent for 3 consecutive scans before it is removed.
+- **Drag overflow to full page** — dragging an app onto a page that is exactly full no longer overflows sort positions into the next page's slot range. The move is now correctly blocked.
+- **Icon size parser (retina directories)** — icon resolution no longer picks the wrong size on systems with retina-style icon directories (e.g. `2x-retina`). The parser now requires a strict `NxN` format (both sides equal integers).
+- **Stale icon cache** — `IconResolver` now evicts cache entries whose paths no longer exist on disk and re-resolves, so a replacement theme icon is found after reinstalling a package.
 
-### Features
-- Touchpad pinch-to-close gesture to dismiss the launcher
-- Desktop file detection now also scans `/usr/local/share/applications/`
+### Other changes
 
-### Packaging
-- Added Ubuntu 26.04 package target
-- Added Fedora 44 package target
-- Removed Flatpak packaging support
+- Install script gained `--global` and non-interactive mode flags for scripted deployments.
 
 ---
 
-**Full changelog:** https://github.com/apapamarkou/linxpad/compare/v1.1.0...v1.3.0
+**Full changelog:** https://github.com/apapamarkou/linxpad/compare/v1.3.0...v1.4.0
