@@ -26,14 +26,17 @@ from PyQt6.QtWidgets import QApplication
 
 from .core import LauncherState, ScannerWorker
 from .services import ConfigService, DesktopScanner, DesktopWatcher, IconResolver, UISettings
+from .services.icons import detect_icon_theme
 from .ui import LauncherWindow
+from .ui.components.icon_utils import set_icon_theme
 from .utils import SingleInstance
 
 logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(name)s: %(message)s")
 
 
 def _rescan() -> None:
-    icons = IconResolver()
+    theme = detect_icon_theme()
+    icons = IconResolver(detected_theme=theme)
     scanner = DesktopScanner(icons)
     config = ConfigService()
     state = LauncherState(config, scanner, icons)
@@ -53,11 +56,14 @@ def main() -> None:
     app = QApplication(sys.argv)
     app.setQuitOnLastWindowClosed(False)
 
+    theme = detect_icon_theme()
+    set_icon_theme(theme)
+    icons = IconResolver(detected_theme=theme)
+
     instance = SingleInstance()
     if not instance.is_primary():
         sys.exit(0)
 
-    icons = IconResolver()
     scanner = DesktopScanner(icons)
     config = ConfigService()
     settings = UISettings()

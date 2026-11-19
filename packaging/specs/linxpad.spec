@@ -1,5 +1,5 @@
 Name:           linxpad
-Version:        1.4.0
+Version:        1.5.0
 Release:        1%{?dist}
 Summary:        A macOS-style fullscreen application launcher for Linux
 
@@ -54,6 +54,12 @@ gtk-update-icon-cache -f -t %{_datadir}/icons/hicolor &>/dev/null || :
 %{_datadir}/applications/linxpad.desktop
 
 %changelog
+* Thu Nov 19 2026 Andrianos Papamarkou <andrianos@example.com> - 1.5.0
+- Added detect_icon_theme() to detect the user's icon theme from KDE, XFCE, LXDE/LXQt, and GNOME/Cinnamon
+- Added set_icon_theme() helper calling QIcon.setThemeName() at startup
+- IconResolver now accepts detected_theme parameter with highest resolution priority
+- Theme detection wired into startup and rescan paths in main.py
+
 * Thu Nov 19 2026 Andrianos Papamarkou <andrianos@example.com> - 1.4.0
 - Fixed stale cached icon path returning null pixmap instead of letter-avatar fallback
 - Fixed SVG icons without Qt SVG plugin causing blank icon slots

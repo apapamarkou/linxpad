@@ -1,3 +1,16 @@
+linxpad (1.5.0) unstable; urgency=medium
+
+  * Added detect_icon_theme() to auto-detect the user's icon theme from KDE,
+    XFCE, LXDE/LXQt, and GNOME/Cinnamon desktop configurations.
+  * Added set_icon_theme() helper that calls QIcon.setThemeName() at startup
+    so QIcon.fromTheme() respects the user's configured theme on all DEs.
+  * IconResolver now accepts detected_theme parameter; the detected theme is
+    given the highest resolution priority (above Breeze-Dark and Breeze).
+  * Theme detection wired into both the main startup and rescan paths in
+    main.py so icons stay consistent after a theme change.
+
+ -- Andrianos Papamarkou <papamarkoua@gmail.com>  Thu, 19 Nov 2026 00:00:00 +0000
+
 linxpad (1.4.0) unstable; urgency=medium
 
   * Fixed stale cached icon path returning null pixmap instead of letter-avatar fallback.

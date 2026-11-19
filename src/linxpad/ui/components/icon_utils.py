@@ -121,3 +121,18 @@ def folder_pixmap(size: int) -> QPixmap:
     if not qi.isNull():
         return qi.pixmap(size, size)
     return _fallback(size, "📁")
+
+
+def set_icon_theme(theme_name: str | None) -> None:
+    """Set Qt's global icon theme so QIcon.fromTheme() uses the correct theme.
+
+    Call once at application startup, after QApplication is created and before
+    any icon lookups. On desktops where Qt cannot auto-detect the theme (KDE,
+    XFCE, LXDE/LXQt), this ensures fromTheme() targets the user's real theme
+    instead of falling back to hicolor.
+
+    When theme_name is None this function is a no-op, preserving the existing
+    behaviour on environments where theme detection is unavailable.
+    """
+    if theme_name is not None:
+        QIcon.setThemeName(theme_name)
