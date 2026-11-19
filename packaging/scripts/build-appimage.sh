@@ -32,7 +32,7 @@ RUN apt-get update -qq && apt-get install -y -qq \
     && chmod +x /usr/local/bin/appimagetool \
     && rm -rf /var/lib/apt/lists/*
 DOCKEREOF
-    docker build -t "$BUILDER_IMAGE" -f "$DOCKERFILE" "$(dirname "$DOCKERFILE")"
+    docker build -t "$BUILDER_IMAGE" - < "$DOCKERFILE"
     rm -f "$DOCKERFILE"
 fi
 
