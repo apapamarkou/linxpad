@@ -145,3 +145,67 @@ def test_pbt_parse_size_scalable_and_clean_nxn(path_expected):
     assert result == expected, (
         f"_parse_size({path!r}): expected {expected}, got {result}."
     )
+
+
+# ── Task 12: Cache re-validation tests ───────────────────────────────────────
+
+
+def test_resolve_stale_cached_path_evicts_and_resolves():
+    """Task 12: resolve() evicts a stale cached path and re-resolves via _find.
+
+    Prime the cache with a path that no longer exists on disk. resolve() should
+    detect the stale entry, call _find() to get a fresh result, update the cache,
+    and return the new path.
+    """
+    import tempfile
+    import os
+
+    resolver = IconResolver()
+    new_path = "/some/valid/replacement/firefox.png"
+
+    # Prime cache with a stale (non-existent) path
+    resolver._cache["firefox"] = "/nonexistent/old/firefox.png"
+
+    # _find() will be called because the cached path no longer exists
+    with __import__("unittest.mock", fromlist=["patch"]).patch.object(
+        resolver, "_find", return_value=new_path
+    ) as mock_find:
+        result = resolver.resolve("firefox")
+
+    assert result == new_path, (
+        f"Expected re-resolved path {new_path!r}, got {result!r}."
+    )
+    assert resolver._cache["firefox"] == new_path, (
+        f"Cache should be updated to {new_path!r}, got {resolver._cache['firefox']!r}."
+    )
+    mock_find.assert_called_once_with("firefox")
+
+
+def test_resolve_valid_cached_path_returns_cached():
+    """Task 12: resolve() returns a cached path without calling _find when it still exists.
+
+    Prime the cache with a path that exists on disk. resolve() should return the
+    cached value immediately without re-resolving.
+    """
+    import tempfile
+    import os
+    from unittest.mock import patch
+
+    resolver = IconResolver()
+
+    # Use a real file so os.path.exists() returns True
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as f:
+        existing_path = f.name
+
+    try:
+        resolver._cache["myapp"] = existing_path
+
+        with patch.object(resolver, "_find") as mock_find:
+            result = resolver.resolve("myapp")
+
+        assert result == existing_path, (
+            f"Expected cached path {existing_path!r}, got {result!r}."
+        )
+        mock_find.assert_not_called()
+    finally:
+        os.unlink(existing_path)

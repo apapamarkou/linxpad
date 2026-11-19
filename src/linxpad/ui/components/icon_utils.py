@@ -44,24 +44,7 @@ def _fallback(size: int, letter: str) -> QPixmap:
 
 def load_app_icon(label, item: dict, size: int, icon_resolver=None) -> None:
     """Load an app icon into a QLabel with fallback chain."""
-    icon_path = item.get("icon")
-    icon_name = item.get("icon_name")
-
-    if icon_path and os.path.exists(icon_path):
-        label.setPixmap(make_pixmap(icon_path, size))
-        return
-    if icon_name:
-        qi = QIcon.fromTheme(icon_name)
-        if not qi.isNull():
-            label.setPixmap(qi.pixmap(size, size))
-            return
-    if icon_name and icon_resolver:
-        resolved = icon_resolver.resolve(icon_name)
-        if resolved:
-            label.setPixmap(make_pixmap(resolved, size))
-            return
-
-    label.setPixmap(_fallback(size, (item.get("name") or "?")[0].upper()))
+    label.setPixmap(app_pixmap(item, size, icon_resolver))
 
 
 def app_pixmap(item: dict, size: int, icon_resolver=None) -> QPixmap:
@@ -70,15 +53,19 @@ def app_pixmap(item: dict, size: int, icon_resolver=None) -> QPixmap:
     icon_name = item.get("icon_name")
 
     if icon_path and os.path.exists(icon_path):
-        return make_pixmap(icon_path, size)
+        pix = make_pixmap(icon_path, size)
+        if not pix.isNull():
+            return pix
     if icon_name:
         qi = QIcon.fromTheme(icon_name)
         if not qi.isNull():
             return qi.pixmap(size, size)
     if icon_name and icon_resolver:
         resolved = icon_resolver.resolve(icon_name)
-        if resolved:
-            return make_pixmap(resolved, size)
+        if resolved and os.path.exists(resolved):
+            pix = make_pixmap(resolved, size)
+            if not pix.isNull():
+                return pix
 
     return _fallback(size, (item.get("name") or "?")[0].upper())
 

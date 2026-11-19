@@ -32,7 +32,10 @@ class IconResolver:
         if not icon_name:
             return None
         if icon_name in self._cache:
-            return self._cache[icon_name]
+            cached = self._cache[icon_name]
+            if cached is None or os.path.exists(cached):
+                return cached
+            # Cached path no longer exists — evict and re-resolve
 
         result = self._find(icon_name)
         self._cache[icon_name] = result
@@ -70,9 +73,14 @@ class IconResolver:
             return 9999
         for p in parts:
             if "x" in p:
-                a = p.split("x")[0]
-                if a.isdigit():
-                    return int(a)
+                halves = p.split("x")
+                if (
+                    len(halves) == 2
+                    and halves[0].isdigit()
+                    and halves[1].isdigit()
+                    and int(halves[0]) == int(halves[1])
+                ):
+                    return int(halves[0])
             elif p.isdigit():
                 return int(p)
         return 0

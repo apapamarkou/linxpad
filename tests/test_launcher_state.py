@@ -55,8 +55,13 @@ def test_apply_scan_adds_new_apps():
 
 
 def test_apply_scan_removes_missing_apps():
+    # Grace period is 3: app survives first two absences, removed on the third.
     state = make_state(apps={"x1": _app("x1", 0)})
-    assert state.apply_scan_results([])
+    assert not state.apply_scan_results([])  # count=1, within grace — no change
+    assert "x1" in state.apps
+    assert not state.apply_scan_results([])  # count=2, within grace — no change
+    assert "x1" in state.apps
+    assert state.apply_scan_results([])      # count=3, grace exhausted — removed
     assert "x1" not in state.apps
 
 

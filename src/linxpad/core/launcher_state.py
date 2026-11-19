@@ -30,11 +30,14 @@ class LauncherState:
         scanner: DesktopScanner,
         icons: IconResolver,
         page_size: int = PAGE_SIZE,
+        absence_grace: int = 3,
     ):
         self._config = config
         self._scanner = scanner
         self._icons = icons
         self._page_size = page_size
+        self._absence_grace = absence_grace
+        self._absence_counts: dict[str, int] = {}
         self.apps: dict[str, Application] = {}
         self.folders: dict[str, Folder] = {}
 
@@ -65,10 +68,16 @@ class LauncherState:
 
         for key, app_id in list(managed_keys.items()):
             if key not in found_keys:
-                # Compact the page this app was on before removing it
-                self._compact_page_of(self.apps[app_id].sort_id)
-                del self.apps[app_id]
-                changed = True
+                # Increment absence count; only remove after grace period
+                self._absence_counts[app_id] = self._absence_counts.get(app_id, 0) + 1
+                if self._absence_counts[app_id] >= self._absence_grace:
+                    self._absence_counts.pop(app_id, None)
+                    # Compact the page this app was on before removing it
+                    self._compact_page_of(self.apps[app_id].sort_id)
+                    del self.apps[app_id]
+                    changed = True
+            else:
+                self._absence_counts.pop(app_id, None)
 
         max_sort = max((a.sort_id for a in self.apps.values()), default=-1)
         max_sort = max(max_sort, max((f.sort_id for f in self.folders.values()), default=-1))
@@ -326,7 +335,7 @@ class LauncherState:
             page_ids.remove(dragged_id)
         else:
             # Dragged from a different page: block if target page is already full
-            if len(page_ids) > self._page_size:
+            if len(page_ids) >= self._page_size:
                 return
             self._compact_page_of(dragged_obj.sort_id)
 

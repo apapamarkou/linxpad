@@ -145,9 +145,9 @@ _Write these tests BEFORE implementing any fix. Observe behavior on UNFIXED code
 
 ### Phase 3: Implementation
 
-- [ ] 8. Fix 1: Null-pixmap guards in icon fallback chain (Bugs 1.1 & 1.2)
+- [x] 8. Fix 1: Null-pixmap guards in icon fallback chain (Bugs 1.1 & 1.2)
 
-  - [ ] 8.1 Implement the fix in `app_pixmap()` and `load_app_icon()`
+  - [x] 8.1 Implement the fix in `app_pixmap()` and `load_app_icon()`
     - **File**: `src/linxpad/ui/components/icon_utils.py`
     - **`app_pixmap()` changes**:
       - In the `icon_path` branch: after `make_pixmap(icon_path, size)`, check `pix.isNull()` before returning. If null, fall through to next branch. This catches SVG-without-plugin and corrupt-file cases (Bug 1.2).
@@ -161,7 +161,7 @@ _Write these tests BEFORE implementing any fix. Observe behavior on UNFIXED code
     - _Preservation: valid icon paths (file exists, non-null pixmap) render unchanged; SVG with plugin available renders unchanged; no-icon items render letter-avatar unchanged — from design Property 6_
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 3.1, 3.2, 3.6_
 
-  - [ ] 8.2 Verify bug condition exploration test now passes
+  - [x] 8.2 Verify bug condition exploration test now passes
     - **Property 1: Expected Behavior** - Non-Null Pixmap Fallback for Stale and SVG Paths
     - **IMPORTANT**: Re-run the SAME tests from task 1 — do NOT write new tests
     - The tests from task 1 encode the expected behavior
@@ -170,7 +170,7 @@ _Write these tests BEFORE implementing any fix. Observe behavior on UNFIXED code
     - **EXPECTED OUTCOME**: Tests PASS (confirms bug is fixed)
     - _Requirements: 2.1, 2.2, 2.3, 2.4_
 
-  - [ ] 8.3 Verify preservation tests still pass
+  - [x] 8.3 Verify preservation tests still pass
     - **Property 2: Preservation** - Valid Icon and SVG Rendering
     - **IMPORTANT**: Re-run the SAME tests from task 5 — do NOT write new tests
     - Run preservation property tests from task 5 (valid icon rendering, SVG with plugin, letter-avatar)
@@ -178,9 +178,9 @@ _Write these tests BEFORE implementing any fix. Observe behavior on UNFIXED code
     - Confirm all tests still pass after fix (no regressions)
     - _Requirements: 3.1, 3.2, 3.6_
 
-- [ ] 9. Fix 2: Grace period for transient .desktop absence (Bug 1.3)
+- [x] 9. Fix 2: Grace period for transient .desktop absence (Bug 1.3)
 
-  - [ ] 9.1 Implement the fix in `LauncherState`
+  - [x] 9.1 Implement the fix in `LauncherState`
     - **File**: `src/linxpad/core/launcher_state.py`
     - **`__init__()` changes**: Add `absence_grace: int = 3` parameter and `self._absence_counts: dict[str, int] = {}` field. The grace period defaults to 3 per Req 2.5. Existing callers (`LauncherState(cfg, scanner, icons)` and `LauncherState(config, scanner, icons, page_size=...)`) use the default of 3 — no call-site changes required. `_absence_counts` is transient (not persisted via `save()`/`load()`); on restart all counts reset to zero.
     - **`apply_scan_results()` changes**:
@@ -193,7 +193,7 @@ _Write these tests BEFORE implementing any fix. Observe behavior on UNFIXED code
     - _Preservation: permanent uninstall (absent for N+ scans) still removes app and compacts grid; new apps still appended at max_sort+1 — from design Properties 7 and 8_
     - _Requirements: 2.5, 2.6, 2.7, 3.3, 3.7_
 
-  - [ ] 9.2 Verify bug condition exploration test now passes
+  - [x] 9.2 Verify bug condition exploration test now passes
     - **Property 1: Expected Behavior** - Grace Period Retention for Transient .desktop Absence
     - **IMPORTANT**: Re-run the SAME test from task 2 — do NOT write a new test
     - The test from task 2 encodes the expected behavior
@@ -202,7 +202,7 @@ _Write these tests BEFORE implementing any fix. Observe behavior on UNFIXED code
     - **EXPECTED OUTCOME**: Test PASSES (confirms bug is fixed)
     - _Requirements: 2.5, 2.7_
 
-  - [ ] 9.3 Verify preservation tests still pass
+  - [x] 9.3 Verify preservation tests still pass
     - **Property 2: Preservation** - Permanent Uninstall Removal and Non-Full Drag Insertion
     - **IMPORTANT**: Re-run the SAME tests from task 6 — do NOT write new tests
     - Run preservation property tests from task 6 (permanent uninstall removal, non-full drag insertion, new-app sort appending)
@@ -210,9 +210,9 @@ _Write these tests BEFORE implementing any fix. Observe behavior on UNFIXED code
     - Confirm all tests still pass after fix (no regressions)
     - _Requirements: 3.3, 3.4, 3.7_
 
-- [ ] 10. Fix 3: Full-page drag capacity check (Bug 1.4)
+- [x] 10. Fix 3: Full-page drag capacity check (Bug 1.4)
 
-  - [ ] 10.1 Implement the fix in `_reorder_main()`
+  - [x] 10.1 Implement the fix in `_reorder_main()`
     - **File**: `src/linxpad/core/launcher_state.py`
     - **`_reorder_main()` changes**: In the cross-page branch (the `else` after `if dragged_id in page_ids:`), change `if len(page_ids) > self._page_size:` to `if len(page_ids) >= self._page_size:`. This is a one-character fix: `>` becomes `>=`.
     - When `len(page_ids) == page_size` (exactly full), `>= page_size` is True, the move is blocked (function returns), and no sort positions are modified.
@@ -223,7 +223,7 @@ _Write these tests BEFORE implementing any fix. Observe behavior on UNFIXED code
     - _Preservation: non-full page drags (target page < page_size) still insert item and reassign sort positions within page's slot range — from design Property 7_
     - _Requirements: 2.8, 3.4_
 
-  - [ ] 10.2 Verify bug condition exploration test now passes
+  - [x] 10.2 Verify bug condition exploration test now passes
     - **Property 1: Expected Behavior** - Block Drag to Full Page
     - **IMPORTANT**: Re-run the SAME test from task 3 — do NOT write a new test
     - The test from task 3 encodes the expected behavior
@@ -232,7 +232,7 @@ _Write these tests BEFORE implementing any fix. Observe behavior on UNFIXED code
     - **EXPECTED OUTCOME**: Test PASSES (confirms bug is fixed)
     - _Requirements: 2.8_
 
-  - [ ] 10.3 Verify preservation tests still pass
+  - [x] 10.3 Verify preservation tests still pass
     - **Property 2: Preservation** - Permanent Uninstall Removal and Non-Full Drag Insertion
     - **IMPORTANT**: Re-run the SAME tests from task 6 — do NOT write new tests
     - Run preservation property tests from task 6 (non-full drag insertion)
@@ -240,9 +240,9 @@ _Write these tests BEFORE implementing any fix. Observe behavior on UNFIXED code
     - Confirm all tests still pass after fix (no regressions)
     - _Requirements: 3.4_
 
-- [ ] 11. Fix 4: NxN size parser (Bug 1.5)
+- [x] 11. Fix 4: NxN size parser (Bug 1.5)
 
-  - [ ] 11.1 Implement the fix in `_parse_size()`
+  - [x] 11.1 Implement the fix in `_parse_size()`
     - **File**: `src/linxpad/services/icons.py`
     - **`_parse_size()` changes**: Replace the `"x" in p` check with a stricter NxN validation:
       - Split `p` on "x" into `halves`.
@@ -260,7 +260,7 @@ _Write these tests BEFORE implementing any fix. Observe behavior on UNFIXED code
     - _Preservation: "scalable" returns 9999 with precedence over NxN; valid NxN components return N; pure-numeric components return their value — from design Property 8_
     - _Requirements: 2.9, 2.10, 3.5_
 
-  - [ ] 11.2 Verify bug condition exploration test now passes
+  - [x] 11.2 Verify bug condition exploration test now passes
     - **Property 1: Expected Behavior** - Correct NxN Size Parsing
     - **IMPORTANT**: Re-run the SAME test from task 4 — do NOT write a new test
     - The test from task 4 encodes the expected behavior
@@ -269,7 +269,7 @@ _Write these tests BEFORE implementing any fix. Observe behavior on UNFIXED code
     - **EXPECTED OUTCOME**: Test PASSES (confirms bug is fixed)
     - _Requirements: 2.9, 2.10_
 
-  - [ ] 11.3 Verify preservation tests still pass
+  - [x] 11.3 Verify preservation tests still pass
     - **Property 2: Preservation** - Scalable Precedence and Valid NxN Parsing
     - **IMPORTANT**: Re-run the SAME tests from task 7 — do NOT write new tests
     - Run preservation property tests from task 7 (scalable returns 9999, valid NxN returns N, pure-digit preserved)
@@ -277,7 +277,7 @@ _Write these tests BEFORE implementing any fix. Observe behavior on UNFIXED code
     - Confirm all tests still pass after fix (no regressions)
     - _Requirements: 3.5_
 
-- [ ] 12. Optional: Cache re-validation in IconResolver.resolve()
+- [x] 12. Optional: Cache re-validation in IconResolver.resolve()
   - **File**: `src/linxpad/services/icons.py`
   - **`resolve()` changes**: When a cached path no longer exists on disk, evict the stale entry and re-resolve so future renders find a valid alternative (e.g. from a replacement theme) rather than repeatedly hitting the `os.path.exists` guard in `app_pixmap`.
   - In the cache-hit branch: check `if cached is None or os.path.exists(cached): return cached`. If the cached path no longer exists, fall through to re-resolve via `self._find(icon_name)` and update the cache.
