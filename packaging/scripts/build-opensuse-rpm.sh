@@ -31,6 +31,7 @@ docker run --rm \
     -v "$WHEEL_DIR:/wheels:ro,z" \
     "$IMAGE" \
     bash -euo pipefail -c "
+        zypper --gpg-auto-import-keys refresh
         zypper install -y rpm-build python3-pip git python3-rpm-macros
         git config --global --add safe.directory /src
         RPMBUILD=/tmp/rpmbuild
